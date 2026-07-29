@@ -559,7 +559,8 @@ const A={
     if(cut){ Object.keys(DB.sessions).forEach(k=>{ if(k<=cut) delete DB.sessions[k]; }); DB.bodyweight=DB.bodyweight.filter(b=>b.date>cut); }
     DB.settings.demo=false; DB.settings.demoUntil=""; DB.settings.onboarded=true;
     DB.run={active:false,exIdx:0,elapsed:0,rest:0,resting:false};
-    save(); closeSheet(); render(); toast("historial limpio — a entrenar");
+    save(); render();
+    openSetupWizard("settings",{finishToast:"historial limpio — a entrenar"});
   },
   exportData(){ exportData(); },
   openImport(){ openImport(); },
@@ -740,6 +741,7 @@ function screenPerfil(){
       <div class="prow"><div class="plabel">descanso por defecto</div><div class="stepper"><div class="b" onclick="A.defMinus()">−</div><div class="v">${fmt(s.restDefault)}</div><div class="b" onclick="A.defPlus()">+</div></div></div>
       <div class="prow"><div class="plabel">mostrar rpe por serie</div><div class="toggle ${s.showRpe?"on":""}" onclick="A.toggleRpe()"></div></div>
       <div class="prow"><div class="plabel">sonido al terminar descanso</div><div class="toggle ${s.sound?"on":""}" onclick="A.toggleSound()"></div></div>
+      <div class="linkrow" onclick="openSetupWizard('settings',{finishToast:'configuración guardada'})"><div class="plabel">volver a configurar rutina y ajustes</div><span style="color:var(--green)">→</span></div>
       <div class="linkrow" onclick="A.openWeek()"><div class="plabel">editar rutina semanal</div><span style="color:var(--green)">→</span></div>
       <div class="linkrow" onclick="A.openPlate()"><div class="plabel">calculadora de discos</div><span style="color:var(--green)">→</span></div>
       <div class="linkrow" onclick="A.goEditHome()"><div class="plabel">editar módulos del inicio</div><span style="color:var(--green)">→</span></div>
@@ -787,6 +789,53 @@ function openWelcome(){
     <div class="mono-note" style="margin:12px 0 4px">explora con los datos de ejemplo, o empieza con el historial vacío. puedes borrar el ejemplo después desde perfil.</div>
     <div class="btnrow" style="margin-top:14px"><div class="mbtn" onclick="A.keepDemo()">explorar ejemplo</div><div class="mbtn green" onclick="A.startFresh()">empezar de cero</div></div>`);
 }
+
+/* ==================== ASISTENTE DE CONFIGURACIÓN ==================== */
+let _wizOpts=null;
+function openSetupWizard(step,opts){
+  if(opts) _wizOpts=opts;
+  else if(!_wizOpts) _wizOpts={finishToast:"listo — a entrenar"};
+  if(step==="routine") renderWizRoutine(); else renderWizSettings();
+}
+window.openSetupWizard=openSetupWizard;
+function renderWizSettings(){
+  const s=DB.settings, kg=U()==="kg", lb=U()==="lb";
+  openSheet(`<h3>configura tu perfil</h3>
+    <div class="mono-note" style="margin-bottom:12px">// ajusta lo básico. lo puedes cambiar después desde perfil.</div>
+    <div class="profile-body" style="padding:0; gap:14px">
+      <div class="prow"><div class="plabel">unidades</div><div class="seg"><div onclick="wizSetUnits('kg')" style="background:${kg?"var(--green)":"transparent"};color:${kg?"var(--ink)":"var(--txt)"}">kg</div><div onclick="wizSetUnits('lb')" style="background:${lb?"var(--green)":"transparent"};color:${lb?"var(--ink)":"var(--txt)"}">lb</div></div></div>
+      <div class="prow"><div class="plabel">descanso por defecto</div><div class="stepper"><div class="b" onclick="wizDefMinus()">−</div><div class="v">${fmt(s.restDefault)}</div><div class="b" onclick="wizDefPlus()">+</div></div></div>
+      <div class="prow"><div class="plabel">mostrar rpe por serie</div><div class="toggle ${s.showRpe?"on":""}" onclick="wizToggleRpe()"></div></div>
+      <div class="prow"><div class="plabel">sonido al terminar descanso</div><div class="toggle ${s.sound?"on":""}" onclick="wizToggleSound()"></div></div>
+    </div>
+    <div class="btnrow" style="margin-top:16px"><div class="mbtn green" onclick="openSetupWizard('routine')">siguiente →</div></div>`);
+}
+window.wizSetUnits=u=>{ DB.settings.unit=u; save(); renderWizSettings(); };
+window.wizDefMinus=()=>{ DB.settings.restDefault=Math.max(15,DB.settings.restDefault-15); save(); renderWizSettings(); };
+window.wizDefPlus=()=>{ DB.settings.restDefault+=15; save(); renderWizSettings(); };
+window.wizToggleRpe=()=>{ DB.settings.showRpe=!DB.settings.showRpe; save(); renderWizSettings(); };
+window.wizToggleSound=()=>{ DB.settings.sound=!DB.settings.sound; save(); renderWizSettings(); if(DB.settings.sound){ audio(); beep(); } };
+function renderWizRoutine(){
+  openSheet(`<h3>elige tu rutina</h3>
+    <div class="mono-note" style="margin-bottom:12px">// puedes cambiarla cuando quieras desde perfil → editar rutina semanal.</div>
+    <div class="btnrow" style="flex-direction:column; gap:8px">
+      <div class="mbtn green" style="width:100%" onclick="openPresets()">elegir una plantilla</div>
+      <div class="mbtn" style="width:100%" onclick="openPdfImport()">importar de un pdf</div>
+      <div class="mbtn" style="width:100%" onclick="startBlankRoutine()">empezar en blanco</div>
+    </div>
+    <div class="btnrow" style="margin-top:16px"><div class="mbtn" onclick="openSetupWizard('settings')">← atrás</div></div>`);
+}
+window.startBlankRoutine=()=>{
+  const cur=[0,1,2,3,4,5,6].reduce((s,i)=>s+(DB.routine[i]||[]).length,0);
+  if(cur>0){
+    openSheet(`<h3>¿empezar en blanco?</h3><div class="mono-note" style="margin-bottom:12px">// se borran los ${cur} ejercicios de tu semana actual. tu historial no se toca.</div><div class="btnrow"><div class="mbtn" onclick="renderWizRoutine()">volver</div><div class="mbtn red" onclick="confirmBlankRoutine()">sí, dejar en blanco</div></div>`);
+  } else confirmBlankRoutine();
+};
+window.confirmBlankRoutine=()=>{
+  DB.routine={0:[],1:[],2:[],3:[],4:[],5:[],6:[]};
+  DB.labels={0:"descanso",1:"descanso",2:"descanso",3:"descanso",4:"descanso",5:"descanso",6:"descanso"};
+  save(); closeSheet(); render(); toast((_wizOpts&&_wizOpts.finishToast)||"listo — arma tu rutina desde perfil");
+};
 function openRoutine(){
   const d=_routineDay; const items=DB.routine[d]||[];
   const chips=[1,2,3,4,5,6,0].map(i=>`<div class="daychip ${i===d?"on":""}" onclick="_routineDay=${i};openRoutine()">${DOW[i]}·${esc(DB.labels[i]||"")}</div>`).join("");
