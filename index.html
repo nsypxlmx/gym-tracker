@@ -475,6 +475,14 @@ function startTodaySession(){ const k=todayKey(); const wd=new Date().getDay();
   if(!DB.sessions[k]){ const exs=(DB.routine[wd]||[]).map(r=>{ const ex=exById(r.exId); return ex?{exId:ex.id,name:ex.name,muscle:ex.muscle,sets:makeSets(ex.id,r.sets,r.reps)}:null; }).filter(Boolean); DB.sessions[k]={label:DB.labels[wd],exercises:exs,finished:false,note:""}; }
   return DB.sessions[k];
 }
+// una rutina editada no debe quedar tapada por la sesión de hoy ya cacheada — pero solo si no hay sets marcados (no se pierde progreso real)
+function refreshTodaySessionIfFresh(){
+  const k=todayKey(); const s=DB.sessions[k];
+  if(!s || s.finished) return;
+  if(s.exercises.some(e=>e.sets.some(x=>x.done))) return;
+  delete DB.sessions[k];
+  if(DB.run.active){ DB.run.active=false; DB.run.exIdx=0; DB.run.elapsed=0; }
+}
 function bestE1RM(exId,beforeKey){ let b=0; Object.keys(DB.sessions).forEach(k=>{ if(beforeKey&&k>=beforeKey) return; const ex=DB.sessions[k].exercises.find(x=>x.exId===exId); if(!ex) return; ex.sets.forEach(s=>{ if(s.done){ const e=est1rm(s); if(e>b)b=e; } }); }); return b; }
 function topE1Today(exId){ const s=DB.sessions[todayKey()]; if(!s) return 0; const ex=s.exercises.find(x=>x.exId===exId); if(!ex) return 0; let m=0; ex.sets.forEach(x=>{ if(x.done){ const e=est1rm(x); if(e>m)m=e; } }); return m; }
 function sessionVol(k){ let v=0; (DB.sessions[k]?DB.sessions[k].exercises:[]).forEach(e=>e.sets.forEach(s=>{ if(s.done) v+=num(s.kg)*(parseInt(s.reps)||0); })); return v; }
@@ -834,7 +842,7 @@ window.startBlankRoutine=()=>{
 window.confirmBlankRoutine=()=>{
   DB.routine={0:[],1:[],2:[],3:[],4:[],5:[],6:[]};
   DB.labels={0:"descanso",1:"descanso",2:"descanso",3:"descanso",4:"descanso",5:"descanso",6:"descanso"};
-  save(); closeSheet(); render(); toast((_wizOpts&&_wizOpts.finishToast)||"listo — arma tu rutina desde perfil");
+  refreshTodaySessionIfFresh(); save(); closeSheet(); render(); toast((_wizOpts&&_wizOpts.finishToast)||"listo — arma tu rutina desde perfil");
 };
 function openRoutine(){
   const d=_routineDay; const items=DB.routine[d]||[];
@@ -855,11 +863,11 @@ window.toggleRest=i=>{
   DB.stash=DB.stash||{};
   if((DB.routine[i]||[]).length){ // entrenar -> descanso: guarda, no borra
     DB.stash[i]={items:DB.routine[i],label:DB.labels[i]||""};
-    DB.routine[i]=[]; DB.labels[i]="descanso"; save(); openWeek(); toast("descanso · ejercicios guardados"); return;
+    DB.routine[i]=[]; DB.labels[i]="descanso"; refreshTodaySessionIfFresh(); save(); openWeek(); toast("descanso · ejercicios guardados"); return;
   }
   const st=DB.stash[i];
   if(st&&st.items.length){ // descanso -> entrenar: restaura lo guardado
-    DB.routine[i]=st.items; DB.labels[i]=st.label||"entreno"; delete DB.stash[i]; save(); openWeek(); toast("día restaurado"); return;
+    DB.routine[i]=st.items; DB.labels[i]=st.label||"entreno"; delete DB.stash[i]; refreshTodaySessionIfFresh(); save(); openWeek(); toast("día restaurado"); return;
   }
   _routineDay=i; openRoutine(); toast("agrega ejercicios a este día"); // sin nada guardado: a editarlo
 };
@@ -873,10 +881,10 @@ window.swapDays=t=>{ const d=_routineDay;
   const tr=DB.routine[t]||[], tl=DB.labels[t]||"";
   DB.routine[t]=DB.routine[d]||[]; DB.labels[t]=DB.labels[d]||"";
   DB.routine[d]=tr; DB.labels[d]=tl;
-  save(); _routineDay=t; openRoutine(); toast(`${DOW[d]} ⇄ ${DOW[t]}`);
+  refreshTodaySessionIfFresh(); save(); _routineDay=t; openRoutine(); toast(`${DOW[d]} ⇄ ${DOW[t]}`);
 };
-window.moveRoutine=(i,dir)=>{ const a=DB.routine[_routineDay]; const j=i+dir; if(j<0||j>=a.length)return; [a[i],a[j]]=[a[j],a[i]]; save(); openRoutine(); };
-window.delRoutine=i=>{ DB.routine[_routineDay].splice(i,1); save(); openRoutine(); };
+window.moveRoutine=(i,dir)=>{ const a=DB.routine[_routineDay]; const j=i+dir; if(j<0||j>=a.length)return; [a[i],a[j]]=[a[j],a[i]]; refreshTodaySessionIfFresh(); save(); openRoutine(); };
+window.delRoutine=i=>{ DB.routine[_routineDay].splice(i,1); refreshTodaySessionIfFresh(); save(); openRoutine(); };
 function openAddExercise(day){
   const dj=day==="now"?"'now'":String(day); // comillas simples: van dentro de onclick="…"
   const list=DB.exercises.slice().sort((a,b)=>a.name.localeCompare(b.name)).map(e=>`<div class="opt" onclick="pickEx('${e.id}',${dj})"><span>${esc(e.name)}</span><span class="m">${e.muscle}</span></div>`).join("");
@@ -885,7 +893,7 @@ function openAddExercise(day){
 }
 window.openAddExercise=openAddExercise;
 window.filterEx=q=>{ q=q.toLowerCase(); document.querySelectorAll("#exlist .opt").forEach(o=>o.style.display=o.textContent.toLowerCase().includes(q)?"":"none"); };
-window.pickEx=(id,day)=>{ if(day==="now"){ const s=startTodaySession(); const ex=exById(id); s.exercises.push({exId:ex.id,name:ex.name,muscle:ex.muscle,sets:makeSets(ex.id,3,10)}); DB.run.active=true; DB.run.exIdx=s.exercises.length-1; save(); closeSheet(); set({tab:"entreno"}); return; } DB.routine[day].push({exId:id,sets:3,reps:10}); save(); _routineDay=day; openRoutine(); };
+window.pickEx=(id,day)=>{ if(day==="now"){ const s=startTodaySession(); const ex=exById(id); s.exercises.push({exId:ex.id,name:ex.name,muscle:ex.muscle,sets:makeSets(ex.id,3,10)}); DB.run.active=true; DB.run.exIdx=s.exercises.length-1; save(); closeSheet(); set({tab:"entreno"}); return; } DB.routine[day].push({exId:id,sets:3,reps:10}); refreshTodaySessionIfFresh(); save(); _routineDay=day; openRoutine(); };
 window.openLoadDay=()=>{
   const rows=[1,2,3,4,5,6,0].map(i=>{ const n=(DB.routine[i]||[]).length;
     const on=n?`onclick="loadRoutineDay(${i})"`:`style="opacity:.35"`;
@@ -925,7 +933,7 @@ window.askPreset=name=>{ const p=allPresets()[name]; if(!p) return;
     <div class="btnrow" style="margin-top:14px"><div class="mbtn" onclick="openPresets()">volver</div><div class="mbtn green" onclick="applyPreset('${esc(name).replace(/'/g,"\\'")}')">aplicar</div></div>`);
 };
 window.openPresets=openPresets;
-window.applyPreset=name=>{ const p=allPresets()[name]; if(!p)return; DB.labels=Object.assign({},p.labels); const nr={0:[],1:[],2:[],3:[],4:[],5:[],6:[]}; Object.keys(p.days).forEach(d=>{ (p.days[d]||[]).forEach(a=>{ const ex=ensureEx(a[0],MUSCLE_BY_NAME[a[0]]); nr[d].push({exId:ex.id,sets:a[1],reps:a[2]}); }); }); DB.routine=nr; save(); closeSheet(); render(); toast("plantilla aplicada"); };
+window.applyPreset=name=>{ const p=allPresets()[name]; if(!p)return; DB.labels=Object.assign({},p.labels); const nr={0:[],1:[],2:[],3:[],4:[],5:[],6:[]}; Object.keys(p.days).forEach(d=>{ (p.days[d]||[]).forEach(a=>{ const ex=ensureEx(a[0],MUSCLE_BY_NAME[a[0]]); nr[d].push({exId:ex.id,sets:a[1],reps:a[2]}); }); }); DB.routine=nr; refreshTodaySessionIfFresh(); save(); closeSheet(); render(); toast("plantilla aplicada"); };
 window.delCustomPreset=name=>{ if(!DB.customPresets) return; delete DB.customPresets[name]; save(); openPresets(); toast("plantilla borrada"); };
 
 /* ==================== IMPORTAR RUTINA DE PDF ==================== */
