@@ -410,7 +410,7 @@ const MODS={
 };
 function baseDefault(){
   return {tab:"inicio", editMode:false, exercises:[], routine:{0:[],1:[],2:[],3:[],4:[],5:[],6:[]}, labels:{0:"descanso",1:"empuje",2:"jalón",3:"pierna",4:"empuje",5:"jalón",6:"pierna"},
-    sessions:{}, bodyweight:[], stash:{},
+    sessions:{}, bodyweight:[], stash:{}, customPresets:{},
     settings:{unit:"kg", theme:"auto", restDefault:90, showRpe:false, sound:true, lastExport:"", barKg:20, barLb:45, modOrder:["racha","volumen","pr","big3","peso"], hidden:["descanso","musculo","sesiones","proximo"], seeded:false, onboarded:false, demo:false, demoUntil:""},
     run:{active:false, exIdx:0, elapsed:0, rest:0, resting:false}};
 }
@@ -855,12 +855,19 @@ window.loadRoutineDay=wd=>{
 };
 window.openNewEx=day=>{ openSheet(`<h3>nuevo ejercicio</h3><div class="field"><label>nombre</label><input id="nn" placeholder="ej. press cerrado"></div><div class="field"><label>músculo</label><select id="nm">${MUSCLES.map(m=>`<option>${m}</option>`).join("")}</select></div><div class="btnrow"><div class="mbtn" onclick="closeSheet()">cancelar</div><div class="mbtn green" onclick="createEx(${JSON.stringify(day)})">guardar</div></div>`); setTimeout(()=>document.getElementById("nn").focus(),80); };
 window.createEx=day=>{ const n=document.getElementById("nn").value.trim(); if(!n){toast("escribe un nombre");return;} const e=ensureEx(n,document.getElementById("nm").value); save(); pickEx(e.id,day); };
+function allPresets(){ return Object.assign({}, PRESETS, DB.customPresets||{}); }
 function openPresets(){
-  const rows=Object.keys(PRESETS).map(n=>{ const p=PRESETS[n]; const nd=Object.keys(p.days).filter(d=>(p.days[d]||[]).length).length;
-    return `<div class="opt" onclick="askPreset('${esc(n).replace(/'/g,"\\'")}')"><span><span class="pname">${esc(n)}</span><small class="pnote">${esc(p.note||nd+" días")}</small></span><span class="m">+</span></div>`; }).join("");
-  openSheet(`<h3>plantillas</h3><div class="mono-note" style="margin-bottom:10px">// reemplaza toda tu semana</div><div class="list" style="max-height:56vh">${rows}</div>`);
+  const custom=DB.customPresets||{}; const customNames=Object.keys(custom);
+  const mkRow=(n,p,isCustom)=>{ const nd=Object.keys(p.days).filter(d=>(p.days[d]||[]).length).length; const en=esc(n).replace(/'/g,"\\'");
+    return `<div class="opt" onclick="askPreset('${en}')"><span><span class="pname">${esc(n)}</span><small class="pnote">${esc(p.note||nd+" días")}</small></span><span class="m"${isCustom?` style="color:var(--red)" onclick="event.stopPropagation();delCustomPreset('${en}')"`:""}>${isCustom?"×":"+"}</span></div>`; };
+  const customRows=customNames.map(n=>mkRow(n,custom[n],true)).join("");
+  const rows=Object.keys(PRESETS).map(n=>mkRow(n,PRESETS[n],false)).join("");
+  openSheet(`<h3>plantillas</h3><div class="mono-note" style="margin-bottom:10px">// reemplaza toda tu semana</div>
+    ${customNames.length?`<div class="mono-note" style="margin:2px 0 6px">tus plantillas</div><div class="list" style="max-height:20vh">${customRows}</div><div class="mono-note" style="margin:12px 0 6px">predefinidas</div>`:""}
+    <div class="list" style="max-height:${customNames.length?"34vh":"50vh"}">${rows}</div>
+    <div class="btnrow" style="margin-top:12px"><div class="mbtn" onclick="openPdfImport()">+ importar de pdf</div></div>`);
 }
-window.askPreset=name=>{ const p=PRESETS[name]; if(!p) return;
+window.askPreset=name=>{ const p=allPresets()[name]; if(!p) return;
   const cur=[0,1,2,3,4,5,6].reduce((s,i)=>s+(DB.routine[i]||[]).length,0);
   const nx=Object.values(p.days).reduce((s,a)=>s+(a||[]).length,0);
   openSheet(`<h3>¿aplicar plantilla?</h3><div class="mono-note" style="margin-bottom:12px">// reemplaza tu semana completa.</div>
@@ -869,7 +876,87 @@ window.askPreset=name=>{ const p=PRESETS[name]; if(!p) return;
     <div class="btnrow" style="margin-top:14px"><div class="mbtn" onclick="openPresets()">volver</div><div class="mbtn green" onclick="applyPreset('${esc(name).replace(/'/g,"\\'")}')">aplicar</div></div>`);
 };
 window.openPresets=openPresets;
-window.applyPreset=name=>{ const p=PRESETS[name]; if(!p)return; DB.labels=Object.assign({},p.labels); const nr={0:[],1:[],2:[],3:[],4:[],5:[],6:[]}; Object.keys(p.days).forEach(d=>{ (p.days[d]||[]).forEach(a=>{ const ex=ensureEx(a[0],MUSCLE_BY_NAME[a[0]]); nr[d].push({exId:ex.id,sets:a[1],reps:a[2]}); }); }); DB.routine=nr; save(); closeSheet(); render(); toast("plantilla aplicada"); };
+window.applyPreset=name=>{ const p=allPresets()[name]; if(!p)return; DB.labels=Object.assign({},p.labels); const nr={0:[],1:[],2:[],3:[],4:[],5:[],6:[]}; Object.keys(p.days).forEach(d=>{ (p.days[d]||[]).forEach(a=>{ const ex=ensureEx(a[0],MUSCLE_BY_NAME[a[0]]); nr[d].push({exId:ex.id,sets:a[1],reps:a[2]}); }); }); DB.routine=nr; save(); closeSheet(); render(); toast("plantilla aplicada"); };
+window.delCustomPreset=name=>{ if(!DB.customPresets) return; delete DB.customPresets[name]; save(); openPresets(); toast("plantilla borrada"); };
+
+/* ==================== IMPORTAR RUTINA DE PDF ==================== */
+const DAY_RE={0:/^(domingo|dom)\b/i,1:/^(lunes|lun)\b/i,2:/^(martes|mar)\b/i,3:/^(mi[eé]rcoles|mi[eé]r)\b/i,4:/^(jueves|jue)\b/i,5:/^(viernes|vie)\b/i,6:/^(s[aá]bado|s[aá]b)\b/i};
+const GENERIC_DAY_RE=/^(d[ií]a|day|entreno|sesi[oó]n)\s*#?\s*\d+\b/i;
+const LABEL_RE=/\b(push|pull|legs|empuje|jal[oó]n|jalon|pierna|superior|inferior|full\s*body|upper|lower|torso|pecho|espalda|hombro|gl[uú]teo|brazo)\b/i;
+const EQUIP_RE=/\b(mancuerna|barra|polea|m[aá]quina|cable|banco|smith|kettlebell|goblet)\b/i;
+const EX_LINE_RE=/^([A-Za-zÀ-ÖØ-öø-ÿ0-9()/'’.\- ]{3,60}?)[\s:.\-–]+(\d{1,2})\s*(?:series?|sets?)?\s*(?:de\s*|[x×]\s*)(\d{1,3})(?:\s*[-–]\s*\d{1,3})?\s*(?:reps?|repeticiones?)?/i;
+const EX_NAME_ONLY_RE=/^[A-Za-zÀ-ÖØ-öø-ÿ][A-Za-zÀ-ÖØ-öø-ÿ0-9()/'’.\- ]{2,58}$/;
+function stripBullet(s){ return s.replace(/^[•*\u2022]\s+/,"").replace(/^\d+[.)]\s+/,"").trim(); }
+function parseRoutineText(lines){
+  const labels={0:"descanso",1:"descanso",2:"descanso",3:"descanso",4:"descanso",5:"descanso",6:"descanso"};
+  const days={0:[],1:[],2:[],3:[],4:[],5:[],6:[]};
+  const order=[1,2,3,4,5,6,0]; let usedGeneric=0; let curDay=null;
+  lines.forEach(raw=>{
+    const line=stripBullet(String(raw||"").trim()); if(!line) return;
+    let matched=null;
+    for(const k in DAY_RE){ if(DAY_RE[k].test(line)){ matched=+k; break; } }
+    if(matched===null && GENERIC_DAY_RE.test(line)){ matched=order[usedGeneric%order.length]; usedGeneric++; }
+    if(matched===null && line.length<=32 && !EX_LINE_RE.test(line) && !EQUIP_RE.test(line) && LABEL_RE.test(line) && !/\d{2,}/.test(line)){
+      matched=order[usedGeneric%order.length]; usedGeneric++;
+    }
+    if(matched!==null){
+      curDay=matched;
+      const lbl=line.replace(/^(lunes|martes|mi[eé]rcoles|jueves|viernes|s[aá]bado|domingo|d[ií]a|day|entreno|sesi[oó]n)\s*#?\d*[:\-–.]?\s*/i,"").trim();
+      labels[curDay]=(lbl||line).slice(0,28);
+      return;
+    }
+    if(curDay===null) curDay=1;
+    const m=EX_LINE_RE.exec(line);
+    if(m){
+      const name=m[1].trim().replace(/\s+/g," ");
+      const sets=Math.min(10,parseInt(m[2],10)); const reps=Math.min(100,parseInt(m[3],10));
+      if(name && sets>0 && reps>0) days[curDay].push([name,sets,reps]);
+    } else if(EX_NAME_ONLY_RE.test(line) && !/\d{2,}/.test(line)){
+      days[curDay].push([line,3,10]);
+    }
+  });
+  [0,1,2,3,4,5,6].forEach(d=>{ if(days[d].length && labels[d]==="descanso") labels[d]="entreno"; });
+  return {labels,days};
+}
+let _importDraft=null;
+function openPdfImport(){
+  openSheet(`<h3>importar rutina de pdf</h3><div class="mono-note" style="margin-bottom:10px">// sube el pdf de tu rutina — la app intenta detectar días y ejercicios. podrás revisar y corregir antes de guardar.</div><div class="field"><input type="file" accept="application/pdf,.pdf" onchange="impPdfFile(event)"></div><div class="btnrow"><div class="mbtn" onclick="openPresets()">cancelar</div></div>`);
+}
+window.openPdfImport=openPdfImport;
+window.impPdfFile=async ev=>{
+  const f=ev.target.files[0]; if(!f) return;
+  if(!window.extractPdfText){ toast("el lector de pdf no cargó — revisa tu conexión e inténtalo de nuevo"); return; }
+  openSheet(`<h3>leyendo pdf…</h3><div class="mono-note">// esto toma unos segundos</div>`);
+  try{
+    const lines=await window.extractPdfText(f);
+    const parsed=parseRoutineText(lines);
+    const total=[0,1,2,3,4,5,6].reduce((s,i)=>s+(parsed.days[i]||[]).length,0);
+    if(!total){ openSheet(`<h3>no se detectaron ejercicios</h3><div class="mono-note" style="margin-bottom:12px">// el formato del pdf no se pudo interpretar. prueba otro archivo o agrega los ejercicios a mano.</div><div class="btnrow"><div class="mbtn" onclick="openPresets()">volver</div></div>`); return; }
+    _importDraft={name:f.name.replace(/\.pdf$/i,"").trim().slice(0,40)||"rutina importada", labels:parsed.labels, days:parsed.days};
+    openImportReview();
+  }catch(e){
+    openSheet(`<h3>no se pudo leer el pdf</h3><div class="mono-note" style="margin-bottom:12px">// intenta con otro archivo.</div><div class="btnrow"><div class="mbtn" onclick="openPresets()">volver</div></div>`);
+  }
+};
+function openImportReview(){
+  if(!_importDraft) return; const d=_importDraft;
+  const blocks=[1,2,3,4,5,6,0].map(di=>{
+    const items=d.days[di]||[]; if(!items.length) return "";
+    const rows=items.map((it,idx)=>`<div class="ritem"><div><div class="rn">${esc(it[0])}</div><div class="rm">${it[1]} × ${it[2]}</div></div><div class="rc"><div class="del" onclick="delImportItem(${di},${idx})">×</div></div></div>`).join("");
+    return `<div class="mono-note" style="margin:12px 0 4px">${DOW[di]} · ${esc(d.labels[di]||"")}</div>${rows}`;
+  }).join("");
+  openSheet(`<h3>revisar plantilla importada</h3><div class="mono-note" style="margin-bottom:10px">// borra lo que no aplique antes de guardar. lo demás lo puedes ajustar después, como cualquier plantilla.</div><div class="field"><label>nombre de la plantilla</label><input id="impName" value="${esc(d.name)}"></div><div class="list" style="max-height:40vh">${blocks}</div><div class="btnrow" style="margin-top:14px"><div class="mbtn" onclick="openPresets()">cancelar</div><div class="mbtn green" onclick="saveImportedPreset()">guardar como plantilla</div></div>`);
+}
+window.delImportItem=(di,idx)=>{ if(!_importDraft) return; _importDraft.days[di].splice(idx,1); openImportReview(); };
+window.saveImportedPreset=()=>{
+  if(!_importDraft) return;
+  const nameInput=document.getElementById("impName"); const name=(nameInput?nameInput.value:"").trim()||_importDraft.name;
+  const total=[0,1,2,3,4,5,6].reduce((s,i)=>s+(_importDraft.days[i]||[]).length,0);
+  if(!total){ toast("no quedan ejercicios para guardar"); return; }
+  if(!DB.customPresets) DB.customPresets={};
+  DB.customPresets[name]={labels:Object.assign({},_importDraft.labels), days:JSON.parse(JSON.stringify(_importDraft.days)), note:"importada de pdf"};
+  save(); _importDraft=null; closeSheet(); openPresets(); toast("plantilla guardada");
+};
 
 function openBodyweight(){ const ex=DB.bodyweight.find(b=>b.date===todayKey()); openSheet(`<h3>peso corporal</h3><div class="field"><label>peso hoy (${U()})</label><input id="bw" inputmode="decimal" value="${ex?ex.weight:""}" placeholder="ej. 78.5"></div><div class="btnrow"><div class="mbtn" onclick="closeSheet()">cancelar</div><div class="mbtn green" onclick="saveBw()">guardar</div></div>`); setTimeout(()=>document.getElementById("bw").focus(),80); }
 window.openBodyweight=openBodyweight;
@@ -949,6 +1036,32 @@ applyTheme();
 render();
 if(!DB.settings.onboarded) openWelcome();
 if("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(()=>{});
+</script>
+<script type="module">
+import * as pdfjsLib from "./pdfjs/pdf.min.mjs";
+pdfjsLib.GlobalWorkerOptions.workerSrc = "./pdfjs/pdf.worker.min.mjs";
+window.extractPdfText = async function(file){
+  const buf = await file.arrayBuffer();
+  const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
+  const lines = [];
+  for(let p=1; p<=pdf.numPages; p++){
+    const page = await pdf.getPage(p);
+    const content = await page.getTextContent();
+    const items = content.items.slice().sort((a,b)=> b.transform[5]-a.transform[5] || a.transform[4]-b.transform[4]);
+    let curY=null, line=[];
+    items.forEach(it=>{
+      const y = Math.round(it.transform[5]);
+      if(curY===null || Math.abs(y-curY)>3){
+        if(line.length) lines.push(line.join(" ").replace(/\s+/g," ").trim());
+        line=[it.str]; curY=y;
+      } else {
+        line.push(it.str);
+      }
+    });
+    if(line.length) lines.push(line.join(" ").replace(/\s+/g," ").trim());
+  }
+  return lines.filter(Boolean);
+};
 </script>
 </body>
 </html>
