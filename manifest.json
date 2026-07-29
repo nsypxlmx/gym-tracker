@@ -1,31 +1,16 @@
 {
-  "name": "GymTracker",
-  "short_name": "GymTracker",
-  "description": "Tracker de entrenamiento: series, pesos, rutina y progreso.",
+  "name": "gym.tracker",
+  "short_name": "gym.tracker",
+  "description": "Tracker de gym minimalista — series, descanso, PRs y progreso.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#0a0e0f",
-  "theme_color": "#0a0e0f",
+  "background_color": "#050505",
+  "theme_color": "#050505",
   "icons": [
-    {
-      "src": "icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "maskable"
-    }
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ]
 }
