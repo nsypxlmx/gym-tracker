@@ -55,8 +55,9 @@
 *{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
 html,body{margin:0;padding:0}
 body{background:var(--bg); color:var(--txt); font-family:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace; display:flex; justify-content:center; min-height:100dvh}
-.app{width:100%; max-width:480px; background:var(--frame); display:flex; flex-direction:column; min-height:100dvh; padding-top:calc(env(safe-area-inset-top) + 10px); position:relative; overflow:hidden}
-.content{flex:1; display:flex; flex-direction:column}
+/* shell fijo: solo .content scrollea, así la nav queda siempre a la vista */
+.app{width:100%; max-width:480px; background:var(--frame); display:flex; flex-direction:column; height:100dvh; padding-top:calc(env(safe-area-inset-top) + 10px); position:relative; overflow:hidden}
+.content{flex:1; min-height:0; overflow-y:auto; -webkit-overflow-scrolling:touch; overscroll-behavior:contain; display:flex; flex-direction:column}
 input,select,textarea{font-family:inherit}
 input:focus,select:focus,textarea:focus{outline:none; box-shadow:3px 3px 0 var(--green)}
 .eyebrow{font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted)}
@@ -233,7 +234,7 @@ input:focus,select:focus,textarea:focus{outline:none; box-shadow:3px 3px 0 var(-
 .mbtn.red{border-color:var(--red); color:var(--red)}
 
 /* nav */
-.nav{display:flex; border-top:1.5px solid var(--line); padding-bottom:env(safe-area-inset-bottom)}
+.nav{display:flex; flex:none; background:var(--frame); border-top:1.5px solid var(--line); padding-bottom:env(safe-area-inset-bottom)}
 .nav div{cursor:pointer; flex:1; text-align:center; padding:12px 0 16px; font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); border-top:3px solid transparent; margin-top:-1.5px}
 .nav div.active{color:var(--green); border-top-color:var(--green)}
 
@@ -550,7 +551,26 @@ const isWork=s=>!!s.done&&s.type!=="warm";
 const jsq=s=>esc(String(s).replace(/\\/g,"\\\\").replace(/'/g,"\\'"));
 function vibrate(p){ if(navigator.vibrate) try{navigator.vibrate(p);}catch(e){} }
 function exById(id){ return DB.exercises.find(e=>e.id===id); }
-function set(patch){ Object.assign(DB, typeof patch==="function"?patch(DB):patch); save(); render(); }
+/* ---- navegación: botón atrás + scroll recordado por tab ----
+   cada tab y cada capa (hoja / modal de pr) meten una entrada en el historial,
+   así "atrás" cierra lo que está encima en vez de cerrar la app. */
+let _scrollY={};      // scrollTop por tab
+let _keepScroll=false; // solo se conserva al tocar la nav; los saltos de flujo van arriba
+let _ignorePop=0;      // entradas que retiramos nosotros al cerrar una capa
+let _sheetOpen=false, _prOpen=false;
+function pushTab(t){ history.pushState({t:"tab",tab:t},""); }
+function pushLayer(){ history.pushState({t:"layer"},""); }
+function dropLayer(){ if(history.state&&history.state.t==="layer"){ _ignorePop++; history.back(); } }
+window.addEventListener("popstate",e=>{
+  if(_ignorePop>0){ _ignorePop--; return; }
+  if(_prOpen){ hidePR(); return; }
+  if(_sheetOpen){ hideSheet(); return; }
+  const st=e.state;
+  if(st&&st.t==="tab"&&st.tab&&st.tab!==DB.tab){ DB.tab=st.tab; save(); render(); }
+});
+function set(patch){ const prev=DB.tab; Object.assign(DB, typeof patch==="function"?patch(DB):patch);
+  if(DB.tab!==prev){ if(!_keepScroll) _scrollY[DB.tab]=0; pushTab(DB.tab); }
+  _keepScroll=false; save(); render(); }
 
 function makeSets(exId,count,reps){ const prev=lastPerf(exId); const out=[]; for(let i=0;i<count;i++){ const p=prev&&prev[i]; out.push({kg:p?p.kg:"", reps:p?p.reps:String(reps||""), done:false, type:"work", rpe:""}); } return out; }
 function lastPerf(exId){ const ks=Object.keys(DB.sessions).filter(k=>k<todayKey()).sort().reverse(); for(const k of ks){ const ex=DB.sessions[k].exercises.find(e=>e.exId===exId); if(ex){ const d=ex.sets.filter(s=>s.done&&s.type!=="warm"&&(s.kg!==""||s.reps!=="")); if(d.length) return d; } } return null; }
@@ -606,7 +626,7 @@ let _newSet=-1;  // "ei:si" del set recién agregado, para animarlo una sola vez
 let _noteEx=0;   // ejercicio cuya nota está abierta en la hoja
 function runEx(ei){ const s=curSession(); if(!s) return null; return s.exercises[ei==null?DB.run.exIdx:ei]||null; }
 const A={
-  go(t){ set({tab:t}); },
+  go(t){ _keepScroll=true; set({tab:t}); },
   toggleEdit(){ DB.editMode=!DB.editMode; save(); render(); },
   move(id,dir){ const o=DB.settings.modOrder,i=o.indexOf(id),j=i+dir; if(j<0||j>=o.length)return; [o[i],o[j]]=[o[j],o[i]]; save(); render(); },
   hideMod(id){ DB.settings.modOrder=DB.settings.modOrder.filter(x=>x!==id); DB.settings.hidden.push(id); save(); render(); },
@@ -663,7 +683,7 @@ const A={
     openSheet(`<h3>nota de la sesión</h3><div class="field"><textarea id="snote" style="min-height:90px" placeholder="energía, sueño, cómo fue el día…">${esc(s.note||"")}</textarea></div><div class="btnrow"><div class="mbtn" onclick="closeSheet()">cancelar</div><div class="mbtn green" onclick="A.saveSessNote()">guardar</div></div>`);
     setTimeout(()=>{ const t=document.getElementById("snote"); if(t) t.focus(); },80); },
   saveSessNote(){ const s=curSession(); const t=document.getElementById("snote"); if(!s||!t) return; s.note=t.value.trim(); save(); closeSheet(); render(); },
-  closePR(){ document.getElementById("prOverlay").classList.remove("show"); },
+  closePR(){ const owned=_prOpen; hidePR(); if(owned) dropLayer(); },
   sharePR(){ const d=window._pr; A.closePR(); if(d) openShareSheet("pr",d); },
   keepDemo(){ DB.settings.onboarded=true; save(); closeSheet(); render(); },
   askFresh(){
@@ -938,6 +958,9 @@ function render(){
   else if(DB.tab==="perfil") scr=screenPerfil();
   else { DB.tab="inicio"; scr=screenInicio(); }
   app.innerHTML=scr+nav();
+  // .content se recrea en cada render: hay que devolverle el scroll antes de pintar
+  const c=app.querySelector(".content");
+  if(c){ c.scrollTop=_scrollY[DB.tab]||0; c.addEventListener("scroll",()=>{ _scrollY[DB.tab]=c.scrollTop; },{passive:true}); }
   if(DB.tab==="inicio") countUp();
 }
 function countUp(){
@@ -951,8 +974,9 @@ function countUp(){
 }
 
 /* ==================== SHEETS ==================== */
-function openSheet(html){ document.getElementById("sheet").innerHTML=html; document.getElementById("overlay").classList.add("show"); }
-function closeSheet(){ document.getElementById("overlay").classList.remove("show"); }
+function openSheet(html){ document.getElementById("sheet").innerHTML=html; document.getElementById("overlay").classList.add("show"); if(!_sheetOpen){ _sheetOpen=true; pushLayer(); } }
+function hideSheet(){ document.getElementById("overlay").classList.remove("show"); _sheetOpen=false; }
+function closeSheet(){ const owned=_sheetOpen; hideSheet(); if(owned) dropLayer(); }
 window.closeSheet=closeSheet;
 document.getElementById("overlay").addEventListener("click",e=>{ if(e.target.id==="overlay") closeSheet(); });
 function toast(msg,label,fn){ const t=document.getElementById("toast"); t.innerHTML=esc(msg)+(label?` <button id="ta">${esc(label)}</button>`:""); t.classList.add("show"); if(label) document.getElementById("ta").onclick=()=>{ t.classList.remove("show"); clearTimeout(t._t); fn(); }; clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove("show"),2000); }
@@ -1320,7 +1344,8 @@ window.commitImport=()=>{ const d=window._imp; if(!d) return; localStorage.setIt
 window.doWipe=()=>{ localStorage.removeItem(KEY); DB=seedAll(baseDefault()); DB.tab="inicio"; save(); closeSheet(); render(); openWelcome(); };
 
 /* ==================== PR + SHARE ==================== */
-function showPR(name,s){ const w=conv(num(s.kg)), e1=conv(est1rm(s)); window._pr={kind:"pr",name,weight:w,reps:parseInt(s.reps)||0,e1:Math.round(e1)}; document.getElementById("prLift").textContent=name; document.getElementById("prWeight").innerHTML=`${w}<small>${U()}</small>`; document.getElementById("prSub").textContent=`${parseInt(s.reps)||0} reps · 1rm est. ${Math.round(e1)}${U()}`; document.getElementById("prOverlay").classList.add("show"); burst(); }
+function showPR(name,s){ const w=conv(num(s.kg)), e1=conv(est1rm(s)); window._pr={kind:"pr",name,weight:w,reps:parseInt(s.reps)||0,e1:Math.round(e1)}; document.getElementById("prLift").textContent=name; document.getElementById("prWeight").innerHTML=`${w}<small>${U()}</small>`; document.getElementById("prSub").textContent=`${parseInt(s.reps)||0} reps · 1rm est. ${Math.round(e1)}${U()}`; document.getElementById("prOverlay").classList.add("show"); if(!_prOpen){ _prOpen=true; pushLayer(); } burst(); }
+function hidePR(){ document.getElementById("prOverlay").classList.remove("show"); _prOpen=false; }
 function burst(){ const box=document.getElementById("prRays"); box.innerHTML=""; const cols=["#00ff88","#00d4ff","#e23b46","#f5c518","#ffffff"]; for(let i=0;i<26;i++){ const s=document.createElement("span"); s.className="confetti"; s.style.background=cols[i%cols.length]; const a=Math.random()*6.283,d=100+Math.random()*220; s.style.setProperty("--dx",(Math.cos(a)*d).toFixed(0)+"px"); s.style.setProperty("--dy",(Math.sin(a)*d).toFixed(0)+"px"); s.style.animationDelay=(Math.random()*.12).toFixed(2)+"s"; box.appendChild(s); } }
 
 function big3ShareData(){ const bw=curBW(); const lifts=BIG3.map(b=>({label:b.label,d:bigLift(b.re),thr:b.thr})); const total=Math.round(lifts.reduce((s,x)=>s+x.d.e1,0)); const tlvl=bw?slevel(total/bw,[2.75,3.75,5.25,7.25]):null; return {kind:"big3",lifts:lifts.map(x=>({label:x.label,val:x.d.e1?conv(x.d.e1):0,lvl:bw&&x.d.e1?LVL[slevel(x.d.e1/bw,x.thr)]:""})),total:conv(total),level:tlvl!=null?LVL[tlvl]:"",shareText:`mi big 3: ${conv(total)}${U()} total. #gymtracker`}; }
@@ -1362,6 +1387,7 @@ setInterval(()=>{ if(!DB.run.active&&!DB.run.resting) return; if(DB.run.resting)
 
 applyTheme();
 render();
+history.replaceState({t:"tab",tab:DB.tab},"");  // raíz del stack, ya con el tab normalizado
 if(!DB.settings.onboarded) openWelcome();
 // se va sola tras el primer render, con un mínimo visible para que no parpadee
 (function(){ const b=document.getElementById("boot"); if(!b) return;
