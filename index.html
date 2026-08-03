@@ -238,6 +238,19 @@ input:focus,select:focus,textarea:focus{outline:none; box-shadow:3px 3px 0 var(-
 .nav div{cursor:pointer; flex:1; text-align:center; padding:12px 0 16px; font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); border-top:3px solid transparent; margin-top:-1.5px}
 .nav div.active{color:var(--green); border-top-color:var(--green)}
 
+/* barra de entreno en curso: fuera del scroll, pegada encima de la nav */
+.runbar{display:flex; align-items:center; gap:8px; flex:none; cursor:pointer; padding:9px 14px; background:var(--card); border-top:1.5px solid var(--green); animation:rbin .28s cubic-bezier(.2,.7,.3,1) both}
+.runbar .rb-dot{width:8px; height:8px; flex:none; background:var(--green); animation:rbpulse 1.6s ease-in-out infinite}
+.runbar .rb-lbl{font-size:9px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); flex:none}
+.runbar .rb-time{font-size:15px; font-weight:700; color:var(--green); font-variant-numeric:tabular-nums; flex:none}
+.runbar.resting .rb-dot{background:var(--cyan)}
+.runbar.resting .rb-time{color:var(--cyan)}
+.runbar .rb-name{flex:1; min-width:0; font-size:12px; color:var(--muted); text-transform:lowercase; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; padding-left:2px}
+.runbar .rb-go{flex:none; color:var(--green); font-size:14px}
+@keyframes rbpulse{0%,100%{opacity:1} 50%{opacity:.2}}
+@keyframes rbin{from{transform:translateY(100%)} to{transform:translateY(0)}}
+@media (prefers-reduced-motion: reduce){.runbar{animation:none}.runbar .rb-dot{animation:none}}
+
 /* overlay / sheet */
 .overlay{position:fixed; inset:0; background:var(--scrim); z-index:40; display:none; align-items:flex-end; justify-content:center}
 .overlay.show{display:flex}
@@ -311,7 +324,7 @@ input:focus,select:focus,textarea:focus{outline:none; box-shadow:3px 3px 0 var(-
 @keyframes conf{0%{opacity:1; transform:translate(-50%,-50%)}100%{opacity:0; transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy)))}}
 @media (prefers-reduced-motion: reduce){.confetti{display:none}.promodal.show{animation:none}}
 
-.toast{position:fixed; bottom:80px; left:50%; transform:translateX(-50%); background:var(--green); color:var(--ink); padding:11px 16px; font-size:13px; font-weight:700; text-transform:lowercase; z-index:70; opacity:0; transition:.2s; pointer-events:none; display:flex; gap:12px; align-items:center; max-width:90%}
+.toast{position:fixed; bottom:calc(80px + var(--runbar-h,0px)); left:50%; transform:translateX(-50%); background:var(--green); color:var(--ink); padding:11px 16px; font-size:13px; font-weight:700; text-transform:lowercase; z-index:70; opacity:0; transition:.2s; pointer-events:none; display:flex; gap:12px; align-items:center; max-width:90%}
 .toast.show{opacity:1; pointer-events:auto}
 .toast button{background:none; border:none; border-left:1.5px solid rgba(10,10,10,.4); color:var(--ink); font-family:inherit; font-weight:700; text-transform:lowercase; padding-left:12px; cursor:pointer}
 /* pantalla de arranque in-app: cubre el hueco entre el splash del sistema y el primer render.
@@ -735,6 +748,18 @@ function roundComplete(s,members,r){ return members.every(i=>{ const x=s.exercis
 
 /* ==================== RENDER ==================== */
 const app=document.getElementById("app");
+// barra persistente mientras hay un entreno vivo y estás en otra pestaña:
+// sin ella la sesión en curso desaparece de la vista al irte a historial
+function runbar(){
+  const s=curSession();
+  if(!DB.run.active||!s||DB.tab==="entreno") return "";
+  const name=s.exercises.length?groupNames(s,groupAt(s.exercises,DB.run.exIdx)):"entreno libre";
+  const rest=DB.run.resting;
+  return `<div class="runbar${rest?" resting":""}" id="runbar" onclick="A.go('entreno')">`
+    +`<span class="rb-dot"></span><span class="rb-lbl" id="rbLbl">${rest?"descanso":"en curso"}</span>`
+    +`<span class="rb-time" id="rbTime">${rest?fmt(DB.run.rest):fmtClock(liveElapsed())}</span>`
+    +`<span class="rb-name">${esc(name)}</span><span class="rb-go">→</span></div>`;
+}
 function nav(){ const T=["inicio","entreno","historial","progreso","perfil"]; return `<div class="nav">${T.map(t=>`<div class="${DB.tab===t?"active":""}" onclick="A.go('${t}')">${t}</div>`).join("")}</div>`; }
 
 function screenInicio(){
@@ -957,7 +982,10 @@ function render(){
   else if(DB.tab==="progreso") scr=screenProgreso();
   else if(DB.tab==="perfil") scr=screenPerfil();
   else { DB.tab="inicio"; scr=screenInicio(); }
-  app.innerHTML=scr+nav();
+  app.innerHTML=scr+runbar()+nav();
+  // el toast flota sobre la nav: hay que subirlo cuando la barra de entreno está puesta
+  const rb=app.querySelector(".runbar");
+  document.documentElement.style.setProperty("--runbar-h", rb?rb.offsetHeight+"px":"0px");
   // .content se recrea en cada render: hay que devolverle el scroll antes de pintar
   const c=app.querySelector(".content");
   if(c){ c.scrollTop=_scrollY[DB.tab]||0; c.addEventListener("scroll",()=>{ _scrollY[DB.tab]=c.scrollTop; },{passive:true}); }
@@ -1383,7 +1411,8 @@ function beep(){ const ac=audio(); if(!ac) return; try{ const t0=ac.currentTime;
     o.connect(g); g.connect(ac.destination); o.start(t0+off); o.stop(t0+off+.17); });
 }catch(e){} }
 function restDone(){ if(DB.settings.sound) beep(); vibrate([90,60,90]); toast("descanso terminado"); }
-setInterval(()=>{ if(!DB.run.active&&!DB.run.resting) return; if(DB.run.resting){ if(DB.run.rest>0) DB.run.rest--; if(DB.run.rest<=0){ DB.run.resting=false; restDone(); } } save(); if(DB.tab==="entreno"&&DB.run.active){ const el=document.getElementById("elapsed"); if(el) el.textContent=fmtClock(liveElapsed()); const rf=document.getElementById("restfmt"); if(rf){ rf.textContent=fmt(DB.run.rest); rf.style.color=DB.run.resting?"var(--green)":"var(--muted)"; } } },1000);
+setInterval(()=>{ if(!DB.run.active&&!DB.run.resting) return; if(DB.run.resting){ if(DB.run.rest>0) DB.run.rest--; if(DB.run.rest<=0){ DB.run.resting=false; restDone(); } } save(); if(DB.tab==="entreno"&&DB.run.active){ const el=document.getElementById("elapsed"); if(el) el.textContent=fmtClock(liveElapsed()); const rf=document.getElementById("restfmt"); if(rf){ rf.textContent=fmt(DB.run.rest); rf.style.color=DB.run.resting?"var(--green)":"var(--muted)"; } }
+  else if(DB.run.active){ const b=document.getElementById("runbar"); if(b){ const rest=DB.run.resting; b.classList.toggle("resting",rest); b.querySelector("#rbLbl").textContent=rest?"descanso":"en curso"; b.querySelector("#rbTime").textContent=rest?fmt(DB.run.rest):fmtClock(liveElapsed()); } } },1000);
 
 applyTheme();
 render();
