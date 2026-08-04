@@ -69,6 +69,8 @@ input:focus,select:focus,textarea:focus{outline:none; box-shadow:3px 3px 0 var(-
 .home-head{padding:32px 24px 0; display:flex; justify-content:space-between; align-items:flex-start}
 .home-h1{font-size:38px; font-weight:700; line-height:1; text-transform:lowercase; margin-top:10px; letter-spacing:-.02em}
 .home-sub{font-size:13px; color:var(--muted); margin-top:10px}
+/* la rutina se editaba solo desde ajustes, enterrada entre preferencias */
+.homelink{display:inline-block; cursor:pointer; margin-top:12px; font-size:12px; color:var(--green); border-bottom:1.5px solid var(--green); padding-bottom:2px}
 .editbtn{cursor:pointer; font-size:11px; letter-spacing:.12em; text-transform:uppercase; padding:4px 8px; border:1.5px solid var(--muted); color:var(--muted)}
 .editbtn.on{border-color:var(--green); color:var(--green)}
 .mods{display:grid; grid-template-columns:1fr 1fr; gap:12px; padding:24px 20px}
@@ -211,13 +213,21 @@ input:focus,select:focus,textarea:focus{outline:none; box-shadow:3px 3px 0 var(-
 .mbar .mf{height:100%; background:var(--green)}
 .mbar .mv{font-size:11px; width:52px}
 
-/* perfil */
-.profile-body{padding:20px; display:flex; flex-direction:column; gap:18px}
+/* ajustes */
+.profile-body{padding:20px; display:flex; flex-direction:column; gap:26px}
+.psec{display:flex; flex-direction:column; gap:10px}
+.psec h4{margin:0}
 .prow{display:flex; justify-content:space-between; align-items:center}
 .plabel{font-size:14px; text-transform:lowercase}
 .seg{display:flex}
 .seg div{cursor:pointer; border:1.5px solid var(--line); padding:6px 14px; font-size:13px}
 .seg div+div{border-left:none}
+/* segmento de la pantalla datos: historial · progreso */
+/* pegado arriba: si no, hay que volver al principio de la lista para cambiar de segmento */
+.dseg{position:sticky; top:0; z-index:5; display:flex; padding:14px 20px; background:var(--frame)}
+.dseg div{flex:1; cursor:pointer; text-align:center; padding:10px 4px; font-size:12px; letter-spacing:.06em; text-transform:lowercase; color:var(--muted); border:1.5px solid var(--line)}
+.dseg div+div{border-left:none}
+.dseg div.on{color:var(--ink); background:var(--green); border-color:var(--green)}
 .stepper{display:flex; align-items:center; gap:10px}
 .stepper .b{cursor:pointer; border:1.5px solid var(--line); padding:4px 10px; font-size:13px}
 .stepper .v{font-size:15px; font-weight:700; color:var(--green)}
@@ -235,8 +245,9 @@ input:focus,select:focus,textarea:focus{outline:none; box-shadow:3px 3px 0 var(-
 
 /* nav */
 .nav{display:flex; flex:none; background:var(--frame); border-top:1.5px solid var(--line); padding-bottom:env(safe-area-inset-bottom)}
-.nav div{cursor:pointer; flex:1; text-align:center; padding:12px 0 16px; font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); border-top:3px solid transparent; margin-top:-1.5px}
+.nav div{cursor:pointer; flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; min-height:48px; padding:8px 0 11px; font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); border-top:3px solid transparent; margin-top:-1.5px}
 .nav div.active{color:var(--green); border-top-color:var(--green)}
+.nav svg{display:block; width:17px; height:17px; fill:none; stroke:currentColor; stroke-width:1.5; stroke-linecap:square; stroke-linejoin:miter}
 
 /* barra de entreno en curso: fuera del scroll, pegada encima de la nav */
 .runbar{display:flex; align-items:center; gap:8px; flex:none; cursor:pointer; padding:9px 14px; background:var(--card); border-top:1.5px solid var(--green); animation:rbin .28s cubic-bezier(.2,.7,.3,1) both}
@@ -255,6 +266,12 @@ input:focus,select:focus,textarea:focus{outline:none; box-shadow:3px 3px 0 var(-
 .overlay{position:fixed; inset:0; background:var(--scrim); z-index:40; display:none; align-items:flex-end; justify-content:center}
 .overlay.show{display:flex}
 .sheet{background:var(--frame); width:100%; max-width:480px; border-top:1.5px solid var(--green); padding:20px 20px calc(20px + env(safe-area-inset-bottom)); max-height:90dvh; overflow-y:auto}
+/* cerrar la hoja era solo tocar el scrim: nada lo anunciaba */
+.sheet-top{display:flex; align-items:center; justify-content:space-between; gap:10px; margin:-6px 0 12px}
+.sheet-top .grip{width:38px; height:3px; background:var(--dim)}
+.sheet-top .sp{width:30px; flex:none}
+.sheet-x{flex:none; width:30px; height:30px; padding:0; background:none; border:1.5px solid var(--line); color:var(--muted); font-family:inherit; font-size:17px; line-height:1; cursor:pointer}
+.sheet-x:active{border-color:var(--green); color:var(--green)}
 .sheet h3{margin:0 0 14px; font-size:18px; font-weight:700; text-transform:lowercase}
 .sheet h4{font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin:16px 0 8px}
 .field{margin-bottom:12px}
@@ -472,14 +489,14 @@ const PRESETS={
 };
 
 const MODS={
-  racha:    {label:"racha",        acc:"var(--green)",  act:"A.go('historial')"},
-  volumen:  {label:"volumen",      acc:"var(--cyan)",   act:"A.go('progreso')"},
-  pr:       {label:"pr reciente",  acc:"var(--amber)",  act:"A.go('progreso')"},
-  descanso: {label:"descanso",     acc:"var(--violet)", act:"A.go('perfil')"},
+  racha:    {label:"racha",        acc:"var(--green)",  act:"A.goData('historial')"},
+  volumen:  {label:"volumen",      acc:"var(--cyan)",   act:"A.goData('progreso')"},
+  pr:       {label:"pr reciente",  acc:"var(--amber)",  act:"A.goData('progreso')"},
+  descanso: {label:"descanso",     acc:"var(--violet)", act:"A.go('ajustes')"},
   peso:     {label:"peso corporal",acc:"var(--orange)", act:"A.openBodyweight()"},
-  big3:     {label:"big 3",        acc:"var(--red)",    act:"A.go('progreso')"},
-  musculo:  {label:"músculos",     acc:"var(--violet)", act:"A.go('progreso')"},
-  sesiones: {label:"sesiones",     acc:"var(--cyan)",   act:"A.go('historial')"},
+  big3:     {label:"big 3",        acc:"var(--red)",    act:"A.goData('progreso')"},
+  musculo:  {label:"músculos",     acc:"var(--violet)", act:"A.goData('progreso')"},
+  sesiones: {label:"sesiones",     acc:"var(--cyan)",   act:"A.goData('historial')"},
   proximo:  {label:"próximo",      acc:"var(--green)",  act:"A.openWeek()"}
 };
 function baseDefault(){
@@ -572,6 +589,8 @@ let _keepScroll=false; // solo se conserva al tocar la nav; los saltos de flujo 
 let _ignorePop=0;      // entradas que retiramos nosotros al cerrar una capa
 let _sheetOpen=false, _prOpen=false;
 function pushTab(t){ history.pushState({t:"tab",tab:t},""); }
+// datos guarda un scroll por segmento: son dos pantallas compartiendo tab
+function scrollKey(){ return DB.tab==="datos" ? "datos:"+(DB.dataTab==="progreso"?"progreso":"historial") : DB.tab; }
 function pushLayer(){ history.pushState({t:"layer"},""); }
 function dropLayer(){ if(history.state&&history.state.t==="layer"){ _ignorePop++; history.back(); } }
 window.addEventListener("popstate",e=>{
@@ -582,7 +601,7 @@ window.addEventListener("popstate",e=>{
   if(st&&st.t==="tab"&&st.tab&&st.tab!==DB.tab){ DB.tab=st.tab; save(); render(); }
 });
 function set(patch){ const prev=DB.tab; Object.assign(DB, typeof patch==="function"?patch(DB):patch);
-  if(DB.tab!==prev){ if(!_keepScroll) _scrollY[DB.tab]=0; pushTab(DB.tab); }
+  if(DB.tab!==prev){ if(!_keepScroll) _scrollY[scrollKey()]=0; pushTab(DB.tab); }
   _keepScroll=false; save(); render(); }
 
 function makeSets(exId,count,reps){ const prev=lastPerf(exId); const out=[]; for(let i=0;i<count;i++){ const p=prev&&prev[i]; out.push({kg:p?p.kg:"", reps:p?p.reps:String(reps||""), done:false, type:"work", rpe:""}); } return out; }
@@ -640,6 +659,8 @@ let _noteEx=0;   // ejercicio cuya nota está abierta en la hoja
 function runEx(ei){ const s=curSession(); if(!s) return null; return s.exercises[ei==null?DB.run.exIdx:ei]||null; }
 const A={
   go(t){ _keepScroll=true; set({tab:t}); },
+  dataTab(k){ if(DB.dataTab===k) return; DB.dataTab=k; save(); render(); },
+  goData(k){ DB.dataTab=k; _keepScroll=true; set({tab:"datos"}); },
   toggleEdit(){ DB.editMode=!DB.editMode; save(); render(); },
   move(id,dir){ const o=DB.settings.modOrder,i=o.indexOf(id),j=i+dir; if(j<0||j>=o.length)return; [o[i],o[j]]=[o[j],o[i]]; save(); render(); },
   hideMod(id){ DB.settings.modOrder=DB.settings.modOrder.filter(x=>x!==id); DB.settings.hidden.push(id); save(); render(); },
@@ -665,7 +686,7 @@ const A={
       openSheet(`<h3>no marcaste ninguna serie</h3><div class="mono-note" style="margin-bottom:14px">// si lo guardas contaría como un entreno vacío en tu racha y tu historial.</div><div class="btnrow"><div class="mbtn" onclick="closeSheet()">seguir entrenando</div><div class="mbtn red" onclick="A.discard()">descartar</div></div>`);
       return;
     }
-    if(s){ s.finished=true; if(s.startedAt) s.endedAt=Date.now(); } DB.run.active=false; DB.run.resting=false; DB.run.rest=0; set({tab:"historial"}); },
+    if(s){ s.finished=true; if(s.startedAt) s.endedAt=Date.now(); } DB.run.active=false; DB.run.resting=false; DB.run.rest=0; set({tab:"datos",dataTab:"historial"}); },
   discard(){ delete DB.sessions[todayKey()]; DB.run={active:false,exIdx:0,rest:0,resting:false}; save(); closeSheet(); set({tab:"inicio"}); toast("entreno descartado"); },
   plateFromEx(ei){ const ex=runEx(ei); if(!ex) return; let mw=0; ex.sets.forEach(s=>{ const w=num(s.kg); if(w>mw)mw=w; }); openPlate(mw?conv(mw):""); },
   openPlate(){ openPlate(""); },
@@ -760,7 +781,15 @@ function runbar(){
     +`<span class="rb-time" id="rbTime">${rest?fmt(DB.run.rest):fmtClock(liveElapsed())}</span>`
     +`<span class="rb-name">${esc(name)}</span><span class="rb-go">→</span></div>`;
 }
-function nav(){ const T=["inicio","entreno","historial","progreso","perfil"]; return `<div class="nav">${T.map(t=>`<div class="${DB.tab===t?"active":""}" onclick="A.go('${t}')">${t}</div>`).join("")}</div>`; }
+// glifos de la nav: trazo duro de 1.5px, a juego con los bordes del resto
+const NAVICON={
+  inicio:`<path d="M2.2 7.4 8 2.4l5.8 5M3.8 8.6V13.6h8.4V8.6"/>`,
+  entreno:`<path d="M3 5.2v5.6M5.8 3.2v9.6M10.2 3.2v9.6M13 5.2v5.6M5.8 8h4.4"/>`,
+  datos:`<path d="M2.4 12.8 6.2 8.6l2.6 2.2 4.8-6M10.4 4.8h3.2v3.2"/>`,
+  ajustes:`<path d="M2.4 5.2h11.2M2.4 10.8h11.2M6 3.2v4M10.4 8.8v4"/>`
+};
+function nav(){ const T=["inicio","entreno","datos","ajustes"];
+  return `<div class="nav">${T.map(t=>`<div class="${DB.tab===t?"active":""}" onclick="A.go('${t}')"><svg viewBox="0 0 16 16" aria-hidden="true">${NAVICON[t]}</svg><span>${t}</span></div>`).join("")}</div>`; }
 
 function screenInicio(){
   const wd=new Date().getDay(); const label=DB.labels[wd]||"entreno";
@@ -822,7 +851,8 @@ function screenInicio(){
       <div class="eyebrow">${eyebrow}</div>
       <div class="home-h1">hoy:<br>${esc(label)}<span class="dot">.</span></div>
       <div class="home-sub">${plan.length?`${muscles} · ${plan.length} ejercicios · ~${plan.length*9} min`:"// día de descanso — puedes entrenar libre"}</div>
-    </div><div class="editbtn ${DB.editMode?"on":""}" onclick="A.toggleEdit()">${DB.editMode?"listo ✓":"editar"}</div></div>
+      <div class="homelink" onclick="A.openWeek()">editar rutina →</div>
+    </div><div class="editbtn ${DB.editMode?"on":""}" onclick="A.toggleEdit()">${DB.editMode?"listo ✓":"módulos"}</div></div>
     ${DB.settings.demo?`<div class="demobar"><span>// estás viendo datos de ejemplo</span><b onclick="A.askFresh()">empezar de cero</b></div>`:""}
     <div class="mods">${DB.settings.modOrder.map(mod).join("")}${hidden}</div>
     <div class="home-foot">${foot}</div>
@@ -901,7 +931,7 @@ function exBlockHTML(s,ei,isSS,round,lastOfGroup){
     </div>`;
 }
 
-function screenHistorial(){
+function bodyHistorial(){
   const now=new Date(); const y=now.getFullYear(),mo=now.getMonth();
   const first=new Date(y,mo,1); const lead=(first.getDay()+6)%7; const days=new Date(y,mo+1,0).getDate();
   const fin=new Set(finishedDates()); const prs=prDatesSet();
@@ -912,16 +942,13 @@ function screenHistorial(){
     cells+=`<div class="cal-cell" style="background:${bg};border:${bd}"></div>`; }
   const list=finishedDates().sort().reverse().map(k=>{ const s=DB.sessions[k]; const dt=new Date(k+"T12:00:00"); const nEx=s.exercises.filter(e=>e.sets.some(x=>x.done)).length; const vol=Math.round(conv(sessionVol(k))).toLocaleString("en-US"); const tag=prs.has(k)?`<span class="sess-tag">■ pr</span>`:""; const d=sessionDur(k);
     return `<div class="sess" onclick="A.openSession('${k}')"><div><div class="sess-title">${DOW[dt.getDay()]} ${dt.getDate()} · ${esc(s.label)} ${tag}</div><div class="sess-spec">${nEx} ejercicios · ${vol} ${U()}${d?` · ${fmtDur(d)}`:""}</div></div><span style="color:var(--muted)">→</span></div>`; }).join("")||`<div class="sess"><div class="sess-spec">// sin entrenos aún</div></div>`;
-  return `<div class="content">
-    <div class="page-head"><div class="page-title">historial</div><div class="month">${MES[mo]} ${y}</div></div>
-    <div class="cal-wrap"><div class="cal-dow"><div>l</div><div>m</div><div>m</div><div>j</div><div>v</div><div>s</div><div>d</div></div><div class="cal-grid">${cells}</div>
+  return `<div class="cal-wrap"><div class="cal-dow"><div>l</div><div>m</div><div>m</div><div>j</div><div>v</div><div>s</div><div>d</div></div><div class="cal-grid">${cells}</div>
       <div class="legend"><span><span style="color:var(--green)">■</span> entrenaste</span><span><span style="color:var(--cyan)">■</span> pr</span><span>□ hoy</span></div></div>
     <div class="sess-list">${list}</div>
-    <div style="padding:16px 20px"><div class="mbtn" onclick="A.pastLog()">+ registrar entreno pasado</div></div>
-  </div>`;
+    <div style="padding:16px 20px"><div class="mbtn" onclick="A.pastLog()">+ registrar entreno pasado</div></div>`;
 }
 
-function screenProgreso(){
+function bodyProgreso(){
   const bw=curBW(); const lifts=BIG3.map(b=>({b,d:bigLift(b.re)}));
   const total=Math.round(lifts.reduce((s,x)=>s+x.d.e1,0));
   const tlvl=bw?slevel(total/bw,[2.75,3.75,5.25,7.25]):null;
@@ -933,9 +960,7 @@ function screenProgreso(){
   const prList=DB.exercises.map(e=>{ let best=0,info=null; Object.keys(DB.sessions).forEach(k=>{ const ex=DB.sessions[k].exercises.find(x=>x.exId===e.id); if(!ex)return; ex.sets.forEach(s=>{ if(isWork(s)){ const v=est1rm(s); if(v>best){best=v;info={kg:s.kg,reps:s.reps,date:k};} } }); }); return info?{name:e.name,val:`${conv(num(info.kg))} ${U()} × ${info.reps}`,date:MES[new Date(info.date+"T12:00:00").getMonth()],e1:best}:null; }).filter(Boolean).sort((a,b)=>b.e1-a.e1).slice(0,5);
   const md=muscleDist(); const mmax=md.length?md[0][1]:1;
   const bwArr=DB.bodyweight.slice().sort((a,b)=>a.date<b.date?-1:1);
-  return `<div class="content">
-    <div class="page-head"><div class="page-title">progreso</div></div>
-    ${maxClub>=1?`<div class="clubbadge">■ ${maxClub} plate club</div>`:""}
+  return `${maxClub>=1?`<div class="clubbadge">■ ${maxClub} plate club</div>`:""}
     <div class="section-lbl">big 3 · fuerza</div>
     ${b3rows}
     <div class="b3total"><span class="t">total 1rm est.</span><b>${conv(total)} ${U()}</b>${tlvl!=null?`<span class="b3lvl" style="color:var(--green);border-color:var(--green)">${LVL[tlvl]}</span>`:""}</div>
@@ -950,37 +975,59 @@ function screenProgreso(){
     <div class="prog-block">${bwArr.length?`<div class="prog-val" style="font-size:22px">${conv(bwArr[bwArr.length-1].weight)} ${U()} <small>${bwArr.length>1?((bwArr[bwArr.length-1].weight-bwArr[0].weight>=0?"+":"")+(Math.round((conv(bwArr[bwArr.length-1].weight)-conv(bwArr[0].weight))*10)/10)):""} total</small></div>${sparkSVG(bwArr.map(x=>conv(x.weight)),"#00d4ff")}`:`<div class="mono-note">// sin registros</div>`}<div class="mbtn green" style="margin-top:12px" onclick="A.openBodyweight()">+ registrar peso</div></div>
     <div class="section-lbl">volumen por músculo · 30d</div>
     ${md.map(m=>`<div class="mbar"><div class="ml">${m[0].toLowerCase()}</div><div class="mt"><div class="mf" style="width:${Math.max(4,m[1]/mmax*100)}%"></div></div><div class="mv">${Math.round(conv(m[1]))}</div></div>`).join("")||`<div class="mono-note" style="padding:6px 20px">// sin volumen en 30 días</div>`}
-    <div style="padding:16px 20px"><div class="mbtn green" onclick="A.openShareBig3()">↗ compartir big 3</div></div>
-  </div>`;
+    <div style="padding:16px 20px"><div class="mbtn green" onclick="A.openShareBig3()">↗ compartir big 3</div></div>`;
 }
 
 function screenPerfil(){
   const s=DB.settings, kg=U()==="kg",lb=U()==="lb";
   return `<div class="content">
-    <div class="page-head" style="display:block"><div class="page-title">perfil</div><div class="month" style="margin-top:4px">datos locales · desde ${MES[new Date().getMonth()]} 2026</div></div>
+    <div class="page-head" style="display:block"><div class="page-title">ajustes</div><div class="month" style="margin-top:4px">datos locales · desde ${MES[new Date().getMonth()]} 2026</div></div>
     <div class="profile-body">
-      <div class="prow"><div class="plabel">unidades</div><div class="seg"><div onclick="A.setUnits('kg')" style="background:${kg?"var(--green)":"transparent"};color:${kg?"var(--ink)":"var(--txt)"}">kg</div><div onclick="A.setUnits('lb')" style="background:${lb?"var(--green)":"transparent"};color:${lb?"var(--ink)":"var(--txt)"}">lb</div></div></div>
-      <div class="prow"><div class="plabel">tema</div><div class="seg">${["auto","claro","oscuro"].map((lbl,i)=>{ const v=["auto","light","dark"][i]; const on=(s.theme||"auto")===v;
-        return `<div onclick="A.setTheme('${v}')" style="background:${on?"var(--green)":"transparent"};color:${on?"var(--ink)":"var(--txt)"}">${lbl}</div>`; }).join("")}</div></div>
-      <div class="prow"><div class="plabel">descanso por defecto</div><div class="stepper"><div class="b" onclick="A.defMinus()">−</div><div class="v">${fmt(s.restDefault)}</div><div class="b" onclick="A.defPlus()">+</div></div></div>
-      <div class="prow"><div class="plabel">mostrar rpe por serie</div><div class="toggle ${s.showRpe?"on":""}" onclick="A.toggleRpe()"></div></div>
-      <div class="prow"><div class="plabel">sonido al terminar descanso</div><div class="toggle ${s.sound?"on":""}" onclick="A.toggleSound()"></div></div>
-      <div class="linkrow" onclick="openSetupWizard('settings',{finishToast:'configuración guardada'})"><div class="plabel">volver a configurar rutina y ajustes</div><span style="color:var(--green)">→</span></div>
-      <div class="linkrow" onclick="A.openWeek()"><div class="plabel">editar rutina semanal</div><span style="color:var(--green)">→</span></div>
-      <div class="linkrow" onclick="A.openPlate()"><div class="plabel">calculadora de discos</div><span style="color:var(--green)">→</span></div>
-      <div class="linkrow" onclick="A.goEditHome()"><div class="plabel">editar módulos del inicio</div><span style="color:var(--green)">→</span></div>
-      <div><h4 style="margin:0 0 8px">datos</h4><div class="btnrow"><div class="mbtn" onclick="A.exportData()">exportar</div><div class="mbtn" onclick="A.openImport()">importar</div></div>${s.demo?`<div class="btnrow" style="margin-top:10px"><div class="mbtn" onclick="A.askFresh()">borrar datos de ejemplo</div></div>`:""}<div class="btnrow" style="margin-top:10px"><div class="mbtn red" onclick="A.wipe()">borrar todo</div></div>${backupNote()}</div>
+      <div class="psec"><h4>rutina</h4>
+        <div class="linkrow" onclick="A.openWeek()"><div class="plabel">editar rutina semanal</div><span style="color:var(--green)">→</span></div>
+        <div class="linkrow" onclick="openPresets()"><div class="plabel">plantillas e importar de pdf</div><span style="color:var(--green)">→</span></div>
+        <div class="linkrow" onclick="openSetupWizard('settings',{finishToast:'configuración guardada'})"><div class="plabel">volver a configurar desde cero</div><span style="color:var(--green)">→</span></div>
+      </div>
+      <div class="psec"><h4>preferencias</h4>
+        <div class="prow"><div class="plabel">unidades</div><div class="seg"><div onclick="A.setUnits('kg')" style="background:${kg?"var(--green)":"transparent"};color:${kg?"var(--ink)":"var(--txt)"}">kg</div><div onclick="A.setUnits('lb')" style="background:${lb?"var(--green)":"transparent"};color:${lb?"var(--ink)":"var(--txt)"}">lb</div></div></div>
+        <div class="prow"><div class="plabel">tema</div><div class="seg">${["auto","claro","oscuro"].map((lbl,i)=>{ const v=["auto","light","dark"][i]; const on=(s.theme||"auto")===v;
+          return `<div onclick="A.setTheme('${v}')" style="background:${on?"var(--green)":"transparent"};color:${on?"var(--ink)":"var(--txt)"}">${lbl}</div>`; }).join("")}</div></div>
+        <div class="prow"><div class="plabel">descanso por defecto</div><div class="stepper"><div class="b" onclick="A.defMinus()">−</div><div class="v">${fmt(s.restDefault)}</div><div class="b" onclick="A.defPlus()">+</div></div></div>
+        <div class="prow"><div class="plabel">mostrar rpe por serie</div><div class="toggle ${s.showRpe?"on":""}" onclick="A.toggleRpe()"></div></div>
+        <div class="prow"><div class="plabel">sonido al terminar descanso</div><div class="toggle ${s.sound?"on":""}" onclick="A.toggleSound()"></div></div>
+      </div>
+      <div class="psec"><h4>herramientas</h4>
+        <div class="linkrow" onclick="A.openPlate()"><div class="plabel">calculadora de discos</div><span style="color:var(--green)">→</span></div>
+        <div class="linkrow" onclick="A.goEditHome()"><div class="plabel">editar módulos del inicio</div><span style="color:var(--green)">→</span></div>
+      </div>
+      <div class="psec"><h4>respaldo</h4>
+        <div class="btnrow"><div class="mbtn" onclick="A.exportData()">exportar</div><div class="mbtn" onclick="A.openImport()">importar</div></div>${s.demo?`<div class="btnrow"><div class="mbtn" onclick="A.askFresh()">borrar datos de ejemplo</div></div>`:""}<div class="btnrow"><div class="mbtn red" onclick="A.wipe()">borrar todo</div></div>${backupNote()}
+      </div>
       <div class="foot-note">// tus datos viven en tu dispositivo.${s.demo?" el historial inicial es de ejemplo — bórralo cuando quieras.":""}</div>
     </div>
   </div>`;
 }
 
+// historial y progreso eran dos tabs que hacían lo mismo (mirar atrás):
+// ahora comparten tab y se alternan con un segmento
+function screenDatos(){
+  const sub=DB.dataTab==="progreso"?"progreso":"historial";
+  const now=new Date();
+  const segs=["historial","progreso"].map(k=>`<div class="${k===sub?"on":""}" onclick="A.dataTab('${k}')">${k}</div>`).join("");
+  return `<div class="content">
+    <div class="page-head"><div class="page-title">datos</div>${sub==="historial"?`<div class="month">${MES[now.getMonth()]} ${now.getFullYear()}</div>`:""}</div>
+    <div class="dseg">${segs}</div>
+    ${sub==="progreso"?bodyProgreso():bodyHistorial()}
+  </div>`;
+}
 function render(){
   let scr;
+  // tabs renombrados/fusionados: hay instalaciones con los valores viejos guardados
+  if(DB.tab==="perfil") DB.tab="ajustes";
+  if(DB.tab==="historial"||DB.tab==="progreso"){ DB.dataTab=DB.tab; DB.tab="datos"; }
   if(DB.tab==="entreno") scr=screenEntreno();
-  else if(DB.tab==="historial") scr=screenHistorial();
-  else if(DB.tab==="progreso") scr=screenProgreso();
-  else if(DB.tab==="perfil") scr=screenPerfil();
+  else if(DB.tab==="datos") scr=screenDatos();
+  else if(DB.tab==="ajustes") scr=screenPerfil();
   else { DB.tab="inicio"; scr=screenInicio(); }
   app.innerHTML=scr+runbar()+nav();
   // el toast flota sobre la nav: hay que subirlo cuando la barra de entreno está puesta
@@ -988,7 +1035,7 @@ function render(){
   document.documentElement.style.setProperty("--runbar-h", rb?rb.offsetHeight+"px":"0px");
   // .content se recrea en cada render: hay que devolverle el scroll antes de pintar
   const c=app.querySelector(".content");
-  if(c){ c.scrollTop=_scrollY[DB.tab]||0; c.addEventListener("scroll",()=>{ _scrollY[DB.tab]=c.scrollTop; },{passive:true}); }
+  if(c){ const k=scrollKey(); c.scrollTop=_scrollY[k]||0; c.addEventListener("scroll",()=>{ _scrollY[k]=c.scrollTop; },{passive:true}); }
   if(DB.tab==="inicio") countUp();
 }
 function countUp(){
@@ -1002,7 +1049,8 @@ function countUp(){
 }
 
 /* ==================== SHEETS ==================== */
-function openSheet(html){ document.getElementById("sheet").innerHTML=html; document.getElementById("overlay").classList.add("show"); if(!_sheetOpen){ _sheetOpen=true; pushLayer(); } }
+const SHEET_TOP=`<div class="sheet-top"><span class="sp"></span><span class="grip"></span><button class="sheet-x" onclick="closeSheet()" aria-label="cerrar">×</button></div>`;
+function openSheet(html){ document.getElementById("sheet").innerHTML=SHEET_TOP+html; document.getElementById("overlay").classList.add("show"); if(!_sheetOpen){ _sheetOpen=true; pushLayer(); } }
 function hideSheet(){ document.getElementById("overlay").classList.remove("show"); _sheetOpen=false; }
 function closeSheet(){ const owned=_sheetOpen; hideSheet(); if(owned) dropLayer(); }
 window.closeSheet=closeSheet;
@@ -1032,7 +1080,7 @@ window.openSetupWizard=openSetupWizard;
 function renderWizSettings(){
   const s=DB.settings, kg=U()==="kg", lb=U()==="lb";
   openSheet(`<h3>configura tu perfil</h3>
-    <div class="mono-note" style="margin-bottom:12px">// ajusta lo básico. lo puedes cambiar después desde perfil.</div>
+    <div class="mono-note" style="margin-bottom:12px">// ajusta lo básico. lo puedes cambiar después desde ajustes.</div>
     <div class="profile-body" style="padding:0; gap:14px">
       <div class="prow"><div class="plabel">unidades</div><div class="seg"><div onclick="wizSetUnits('kg')" style="background:${kg?"var(--green)":"transparent"};color:${kg?"var(--ink)":"var(--txt)"}">kg</div><div onclick="wizSetUnits('lb')" style="background:${lb?"var(--green)":"transparent"};color:${lb?"var(--ink)":"var(--txt)"}">lb</div></div></div>
       <div class="prow"><div class="plabel">descanso por defecto</div><div class="stepper"><div class="b" onclick="wizDefMinus()">−</div><div class="v">${fmt(s.restDefault)}</div><div class="b" onclick="wizDefPlus()">+</div></div></div>
@@ -1048,7 +1096,7 @@ window.wizToggleRpe=()=>{ DB.settings.showRpe=!DB.settings.showRpe; save(); rend
 window.wizToggleSound=()=>{ DB.settings.sound=!DB.settings.sound; save(); renderWizSettings(); if(DB.settings.sound){ audio(); beep(); } };
 function renderWizRoutine(){
   openSheet(`<h3>elige tu rutina</h3>
-    <div class="mono-note" style="margin-bottom:12px">// puedes cambiarla cuando quieras desde perfil → editar rutina semanal.</div>
+    <div class="mono-note" style="margin-bottom:12px">// puedes cambiarla cuando quieras desde ajustes → editar rutina semanal.</div>
     <div class="btnrow" style="flex-direction:column; gap:8px">
       <div class="mbtn green" style="width:100%" onclick="openPresets()">elegir una plantilla</div>
       <div class="mbtn" style="width:100%" onclick="openPdfImport()">importar de un pdf</div>
