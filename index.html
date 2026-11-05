@@ -109,6 +109,13 @@ input:focus,select:focus,textarea:focus{outline:none; box-shadow:3px 3px 0 var(-
 .mrow{display:flex; align-items:center; gap:6px; margin-top:7px; font-size:10px; color:var(--muted); text-transform:lowercase}
 .mrow .mn{width:52px; text-align:right; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
 .mrow .mt{flex:1; height:8px; background:var(--track); border:1.5px solid var(--dim)}
+.mrow.b3m .mn{width:78px}
+.mrow .mv{width:30px; text-align:right; color:var(--txt); font-size:10px}
+.bar-days{display:flex; gap:5px; margin-top:4px}
+.bar-days span{flex:1; text-align:center; font-size:8px; color:var(--muted); text-transform:uppercase}
+.spark-axis{display:flex; justify-content:space-between; margin-top:6px; font-size:10px; color:var(--muted)}
+.b3row.tap,.prs-item.tap{cursor:pointer}
+.b3row.tap:active,.prs-item.tap:active{background:var(--card)}
 .mrow .mf{height:100%; background:var(--acc); transform-origin:left; animation:growx .6s cubic-bezier(.2,.8,.3,1) both}
 @keyframes growx{from{transform:scaleX(0)}to{transform:scaleX(1)}}
 .impsum{display:flex; justify-content:space-between; align-items:baseline; gap:10px; font-size:11px; color:var(--muted); border-bottom:1.5px solid var(--dim); padding:7px 0}
@@ -125,7 +132,8 @@ input:focus,select:focus,textarea:focus{outline:none; box-shadow:3px 3px 0 var(-
 .addrow{grid-column:1/-1; display:flex; flex-wrap:wrap; gap:8px; align-items:center}
 .addrow span{font-size:11px; color:var(--muted)}
 .chip{cursor:pointer; font-size:11px; letter-spacing:.08em; text-transform:uppercase; border:1.5px dashed var(--muted); color:var(--muted); padding:4px 8px}
-.home-foot{margin-top:auto; padding:0 20px 20px}
+.home-cta{padding:20px 20px 4px}
+.home-cta .btn-primary{padding:16px}
 .btn-primary{cursor:pointer; background:var(--green); color:var(--ink); font-weight:700; font-size:17px; text-transform:lowercase; text-align:center; padding:18px; box-shadow:5px 5px 0 var(--line)}
 .btn-primary:active{transform:translate(2px,2px); box-shadow:none}
 .btn-done{border:1.5px solid var(--green); color:var(--green); font-weight:700; font-size:15px; text-transform:lowercase; text-align:center; padding:16px}
@@ -181,7 +189,12 @@ input:focus,select:focus,textarea:focus{outline:none; box-shadow:3px 3px 0 var(-
 .cal-wrap{padding:20px}
 .cal-dow{display:grid; grid-template-columns:repeat(7,1fr); gap:6px; font-size:10px; color:var(--muted); text-transform:uppercase; text-align:center; margin-bottom:8px}
 .cal-grid{display:grid; grid-template-columns:repeat(7,1fr); gap:6px}
-.cal-cell{aspect-ratio:1; box-sizing:border-box}
+.cal-cell{height:34px; box-sizing:border-box; display:flex; align-items:center; justify-content:center; font-size:11px}
+.cal-cell.tap{cursor:pointer; font-weight:700}
+.cal-nav{display:flex; align-items:center; justify-content:space-between; margin-bottom:12px}
+.cal-mo{font-size:14px; font-weight:700; text-transform:lowercase}
+.cn{cursor:pointer; border:1.5px solid var(--line); width:40px; height:34px; display:flex; align-items:center; justify-content:center; font-size:18px; user-select:none}
+.cn.off{opacity:.25; cursor:default}
 .legend{display:flex; gap:16px; margin-top:12px; font-size:11px; color:var(--muted)}
 .sess-list{border-top:1.5px solid var(--line)}
 .sess{padding:14px 20px; border-bottom:1.5px solid var(--line-soft); display:flex; justify-content:space-between; align-items:center; cursor:pointer}
@@ -491,7 +504,7 @@ const PRESETS={
 
 const MODS={
   racha:    {label:"racha",        acc:"var(--green)",  act:"A.goData('historial')"},
-  volumen:  {label:"volumen",      acc:"var(--cyan)",   act:"A.goData('progreso')"},
+  volumen:  {label:"volumen · 7 días",      acc:"var(--cyan)",   act:"A.goData('progreso')"},
   pr:       {label:"pr reciente",  acc:"var(--amber)",  act:"A.goData('progreso')"},
   descanso: {label:"descanso",     acc:"var(--violet)", act:"A.go('ajustes')"},
   peso:     {label:"peso corporal",acc:"var(--orange)", act:"A.openBodyweight()"},
@@ -662,8 +675,14 @@ function plateClub(w){ return U()==="kg"?Math.max(0,Math.floor((w-20)/40+1e-9)):
 function platesFor(w){ const bar=U()==="kg"?DB.settings.barKg:DB.settings.barLb; const P=U()==="kg"?[25,20,15,10,5,2.5,1.25]:[45,35,25,10,5,2.5]; let rem=(w-bar)/2,u=[]; if(rem<0)return[]; P.forEach(p=>{ while(rem>=p-1e-9){ u.push(p); rem=Math.round((rem-p)*100)/100; } }); return u; }
 function plateInfo(p){ const kg={25:["#e23b46","#fff",82],20:["#2f6bff","#fff",82],15:["#f5c518","#141414",70],10:["#22a447","#fff",58],5:["#eef1f2","#141414",46],2.5:["#d63b3b","#fff",36],1.25:["#b9c1c5","#141414",28]}; const lb={45:["#2f6bff","#fff",82],35:["#f5c518","#141414",72],25:["#22a447","#fff",60],10:["#eef1f2","#141414",46],5:["#e23b46","#fff",38],2.5:["#b9c1c5","#141414",30]}; return (U()==="kg"?kg:lb)[p]||["#b9c1c5","#141414",34]; }
 function muscleDist(){ const cut=dateKey(new Date(Date.now()-30*864e5)); const vol={}; Object.keys(DB.sessions).forEach(k=>{ if(k<cut)return; DB.sessions[k].exercises.forEach(e=>{ const m=e.muscle||"Otro"; e.sets.forEach(s=>{ if(isWork(s)) vol[m]=(vol[m]||0)+num(s.kg)*(parseInt(s.reps)||0); }); }); }); return Object.entries(vol).filter(x=>x[1]>0).sort((a,b)=>b[1]-a[1]); }
+// serie de 1rm estimado por sesión, con su fecha (para rotular el eje)
+function e1Series(exId){ const out=[]; Object.keys(DB.sessions).sort().forEach(k=>{ const ex=DB.sessions[k].exercises.find(x=>x.exId===exId); if(!ex)return; let m=0; ex.sets.forEach(s=>{ if(isWork(s)){ const e=est1rm(s); if(e>m)m=e; } }); if(m>0)out.push({k,v:m}); }); return out; }
+function shortDate(k){ const d=new Date(k+"T12:00:00"); return d.getDate()+" "+MES[d.getMonth()]; }
+// eje bajo una gráfica: fecha inicial, rango de valores y fecha final
+function sparkAxis(first,last,vals){ const mn=Math.min(...vals),mx=Math.max(...vals); const f=v=>Math.round(v*10)/10;
+  return `<div class="spark-axis"><span>${shortDate(first)}</span><span>${f(mn)===f(mx)?f(mn):f(mn)+"–"+f(mx)} ${U()}</span><span>${shortDate(last)}</span></div>`; }
 function sparkPts(exId){ const pts=[]; Object.keys(DB.sessions).sort().forEach(k=>{ const ex=DB.sessions[k].exercises.find(x=>x.exId===exId); if(!ex)return; let m=0; ex.sets.forEach(s=>{ if(isWork(s)){ const e=est1rm(s); if(e>m)m=e; } }); if(m>0)pts.push(m); }); return pts; }
-function sparkSVG(vals,color){ if(vals.length<2) return ""; const W=340,H=100,pad=4; const mn=Math.min(...vals),mx=Math.max(...vals),rg=(mx-mn)||1; const st=(W-pad*2)/(vals.length-1); const p=vals.map((v,i)=>[pad+i*st,H-pad-((v-mn)/rg)*(H-pad*2)]); const d=p.map((q,i)=>(i?"L":"M")+q[0].toFixed(1)+" "+q[1].toFixed(1)).join(" "); const last=p[p.length-1]; return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;display:block"><line x1="0" y1="${H-1}" x2="${W}" y2="${H-1}" style="stroke:var(--dim)" stroke-width="1.5"/><path d="${d}" fill="none" stroke="${color}" stroke-width="2"/><rect x="${(last[0]-4).toFixed(1)}" y="${(last[1]-4).toFixed(1)}" width="8" height="8" style="fill:var(--cyan)"/></svg>`; }
+function sparkSVG(vals,color){ if(vals.length<2) return ""; const W=340,H=100,pad=4; const mn=Math.min(...vals),mx=Math.max(...vals),rg=(mx-mn)||1; const st=(W-pad*2)/(vals.length-1); const p=vals.map((v,i)=>[pad+i*st,mx===mn?H/2:H-pad-((v-mn)/rg)*(H-pad*2)]); const d=p.map((q,i)=>(i?"L":"M")+q[0].toFixed(1)+" "+q[1].toFixed(1)).join(" "); const last=p[p.length-1]; return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;display:block"><line x1="0" y1="${H-1}" x2="${W}" y2="${H-1}" style="stroke:var(--dim)" stroke-width="1.5"/><path d="${d}" fill="none" stroke="${color}" stroke-width="2"/><rect x="${(last[0]-4).toFixed(1)}" y="${(last[1]-4).toFixed(1)}" width="8" height="8" style="fill:var(--cyan)"/></svg>`; }
 
 /* ==================== ACCIONES ==================== */
 let _newSet=-1;  // "ei:si" del set recién agregado, para animarlo una sola vez
@@ -727,6 +746,9 @@ const A={
   openShareBig3(){ openShareSheet("big3",big3ShareData()); },
   shareSession(k){ openShareSession(k); },
   openSession(k){ openSessionDetail(k); },
+  chartEx(id){ if(e1Series(id).length<2){ toast("aún no hay datos suficientes"); return; } DB.chartEx=id; save(); render();
+    const c=document.getElementById("e1chart"); if(c) c.scrollIntoView({behavior:"smooth",block:"center"}); },
+  calMove(d){ _calOff=Math.max(0,_calOff-d); render(); },
   pastLog(){ openPastLog(); },
   openExNote(ei){ const ex=runEx(ei); if(!ex) return; _noteEx=ei; const prev=lastExNote(ex.exId);
     openSheet(`<h3>nota · ${esc(ex.name)}</h3>${prev&&!ex.note?`<div class="mono-note" style="margin-bottom:10px">// la última vez: ${esc(prev)}</div>`:""}<div class="field"><textarea id="exnote" style="min-height:90px" placeholder="cómo se sintió, ajuste del banco, molestias…">${esc(ex.note||"")}</textarea></div><div class="btnrow"><div class="mbtn" onclick="closeSheet()">cancelar</div><div class="mbtn green" onclick="A.saveExNote()">guardar</div></div>`);
@@ -816,11 +838,12 @@ function screenInicio(){
   const muscles=[...new Set(plan.map(r=>{ const e=exById(r.exId); return e?e.muscle.toLowerCase():""; }).filter(Boolean))].join(" / ")||"—";
   const st=streak(); const now=new Date();
   const eyebrow=`${DOW[now.getDay()]} ${now.getDate()} ${MES[now.getMonth()]} · día ${st} de racha`;
-  const wv=conv(weekVol()).toLocaleString("en-US");
   const lp=lastPR();
   const lpName=lp?lp.name:"—", lpVal=lp?`${conv(num(lp.kg))} ${U()} × ${lp.reps}`:"sin registro", lpDate=lp?`${new Date(lp.date+"T12:00:00").getDate()} ${MES[new Date(lp.date+"T12:00:00").getMonth()]}`:"";
   const sq=[0,1,2,3,4,5,6].map(i=>{ const d=new Date(); d.setDate(d.getDate()-(6-i)); const on=finishedDates().includes(dateKey(d)); const today=i===6; const dly=`animation-delay:${140+i*45}ms`; return today&&!on?`<div class="sq" style="border:1px solid var(--muted);${dly}"></div>`:`<div class="sq" style="background:${on?"var(--green)":"var(--dim)"};${dly}"></div>`; });
   const dayVols=[]; for(let i=6;i>=0;i--){ const d=new Date(); d.setDate(d.getDate()-i); dayVols.push(sessionVol(dateKey(d))); }
+  const vol7=conv(dayVols.reduce((a,b)=>a+b,0)); const vol7s=vol7.toLocaleString("en-US");
+  const dayLtr=[6,5,4,3,2,1,0].map(i=>{ const d=new Date(); d.setDate(d.getDate()-i); return "dlmmjvs"[d.getDay()]; });
   const mxv=Math.max(...dayVols,1); const bars=dayVols.map((v,i)=>`<div style="height:${Math.max(4,v/mxv*100)}%;background:${i===6?"var(--cyan)":"var(--dim)"};animation-delay:${140+i*45}ms"></div>`).join("");
   const mod=(id,i)=>{
     const m=MODS[id]; if(!m) return "";
@@ -829,7 +852,7 @@ function screenInicio(){
     const go=tap?`<div class="modgo">→</div>`:"";
     const box=(body,full)=>`<div class="mod${full?" full":""}${tap?" tap":""}" ${tap?`onclick="${m.act}"`:""} style="--acc:${m.acc};animation-delay:${i*55}ms">${c}${go}<div class="mlabel">${m.label}</div>${body}</div>`;
     if(id==="racha") return box(`<div class="big-num"><span class="cnum" data-v="${st}">${st}</span><small> días</small></div><div class="sq-row">${sq.join("")}</div>`);
-    if(id==="volumen") return box(`<div class="vol-num"><span class="cnum" data-v="${conv(weekVol())}" data-loc="1">${wv}</span><small> ${U()}</small></div><div class="bars">${bars}</div>`);
+    if(id==="volumen") return box(`<div class="vol-num"><span class="cnum" data-v="${vol7}" data-loc="1">${vol7s}</span><small> ${U()}</small></div><div class="bars">${bars}</div><div class="bar-days">${dayLtr.map(l=>`<span>${l}</span>`).join("")}</div>`);
     if(id==="pr") return box(`<div class="pr-row"><div class="pr-name">${esc(lpName)}</div><div class="pr-val">${esc(lpVal)}</div></div><div class="pr-date">${lpDate}</div>`,true);
     if(id==="descanso"){ const n=setsDoneToday(); const mins=Math.round(n*DB.settings.restDefault/60);
       return box(`<div class="rest-num">${fmt(DB.settings.restDefault)}</div><div class="wsub">${n?`${n} serie${n===1?"":"s"} hoy · ~${mins} min de pausa`:"por serie · toca para ajustar"}</div>`); }
@@ -843,7 +866,7 @@ function screenInicio(){
       const t=conv(big3Total()); const bw=curBW();
       const lvl=bw?LVL[slevel(big3Total()/bw,[2.75,3.75,5.25,7.25])]:"";
       const lifts=BIG3.map(b=>({label:b.label,e1:bigLift(b.re).e1})); const mx=Math.max(...lifts.map(l=>l.e1),1);
-      const rows=lifts.map((l,j)=>`<div class="mrow"><div class="mn">${l.label.split(" ")[0]}</div><div class="mt"><div class="mf" style="width:${Math.max(2,l.e1/mx*100)}%;animation-delay:${j*90}ms"></div></div></div>`).join("");
+      const rows=lifts.map((l,j)=>`<div class="mrow b3m"><div class="mn">${l.label}</div><div class="mt"><div class="mf" style="width:${Math.max(2,l.e1/mx*100)}%;animation-delay:${j*90}ms"></div></div><div class="mv">${l.e1?Math.round(conv(l.e1)):"—"}</div></div>`).join("");
       return box(`<div class="acc-num"><span class="cnum" data-v="${t}" data-loc="1">${t.toLocaleString("en-US")}</span><small> ${U()}</small></div><div class="wsub">total 1rm estimado</div>${rows}${lvl?`<div class="lvlbadge">${lvl}</div>`:""}`,true);
     }
     if(id==="musculo"){
@@ -872,9 +895,9 @@ function screenInicio(){
       <div class="home-sub">${plan.length?`${muscles} · ${plan.length} ejercicios · ~${plan.length*9} min`:"// día de descanso — puedes entrenar libre"}</div>
       <div class="homelink" onclick="A.openWeek()">editar rutina →</div>
     </div><div class="editbtn ${DB.editMode?"on":""}" onclick="A.toggleEdit()">${DB.editMode?"listo ✓":"módulos"}</div></div>
+    <div class="home-cta">${foot}</div>
     ${DB.settings.demo?`<div class="demobar"><span>// estás viendo datos de ejemplo</span><b onclick="A.askFresh()">empezar de cero</b></div>`:""}
     <div class="mods">${DB.settings.modOrder.map(mod).join("")}${hidden}</div>
-    <div class="home-foot">${foot}</div>
   </div>`;
 }
 
@@ -950,18 +973,23 @@ function exBlockHTML(s,ei,isSS,round,lastOfGroup){
     </div>`;
 }
 
+let _calOff=0;  // meses hacia atrás desde el actual (no se guarda: al volver arranca en hoy)
 function bodyHistorial(){
-  const now=new Date(); const y=now.getFullYear(),mo=now.getMonth();
+  const now=new Date(); const base=new Date(now.getFullYear(),now.getMonth()-_calOff,1); const y=base.getFullYear(),mo=base.getMonth();
+  const mkey=`${y}-${String(mo+1).padStart(2,"0")}`;
+  const allFin=finishedDates().sort(); const oldest=allFin.length?allFin[0].slice(0,7):mkey;
+  const canBack=mkey>oldest, canFwd=_calOff>0;
   const first=new Date(y,mo,1); const lead=(first.getDay()+6)%7; const days=new Date(y,mo+1,0).getDate();
   const fin=new Set(finishedDates()); const prs=prDatesSet();
   let cells=""; for(let i=0;i<lead;i++) cells+=`<div class="cal-cell"></div>`;
-  for(let d=1;d<=days;d++){ const k=dateKey(new Date(y,mo,d)); let bg="var(--card)",bd="none";
-    if(k===todayKey()){ if(fin.has(k)) bg="var(--green)"; else{ bg="transparent"; bd="1.5px solid var(--green)"; } }
-    else if(prs.has(k)) bg="var(--cyan)"; else if(fin.has(k)) bg="var(--green)";
-    cells+=`<div class="cal-cell" style="background:${bg};border:${bd}"></div>`; }
-  const list=finishedDates().sort().reverse().map(k=>{ const s=DB.sessions[k]; const dt=new Date(k+"T12:00:00"); const nEx=s.exercises.filter(e=>e.sets.some(x=>x.done)).length; const vol=Math.round(conv(sessionVol(k))).toLocaleString("en-US"); const tag=prs.has(k)?`<span class="sess-tag">■ pr</span>`:""; const d=sessionDur(k);
-    return `<div class="sess" onclick="A.openSession('${k}')"><div><div class="sess-title">${DOW[dt.getDay()]} ${dt.getDate()} · ${esc(s.label)} ${tag}</div><div class="sess-spec">${nEx} ejercicios · ${vol} ${U()}${d?` · ${fmtDur(d)}`:""}</div></div><span style="color:var(--muted)">→</span></div>`; }).join("")||`<div class="sess"><div class="sess-spec">// sin entrenos aún</div></div>`;
-  return `<div class="cal-wrap"><div class="cal-dow"><div>l</div><div>m</div><div>m</div><div>j</div><div>v</div><div>s</div><div>d</div></div><div class="cal-grid">${cells}</div>
+  for(let d=1;d<=days;d++){ const k=dateKey(new Date(y,mo,d)); let bg="var(--card)",bd="none",fg="var(--muted)";
+    if(prs.has(k)) { bg="var(--cyan)"; fg="var(--ink)"; } else if(fin.has(k)) { bg="var(--green)"; fg="var(--ink)"; }
+    if(k===todayKey()&&!fin.has(k)){ bg="transparent"; bd="1.5px solid var(--green)"; fg="var(--green)"; }
+    const tap=fin.has(k)?` onclick="A.openSession('${k}')"`:"";
+    cells+=`<div class="cal-cell${tap?" tap":""}" style="background:${bg};border:${bd};color:${fg}"${tap}>${d}</div>`; }
+  const list=finishedDates().filter(k=>k.startsWith(mkey)).sort().reverse().map(k=>{ const s=DB.sessions[k]; const dt=new Date(k+"T12:00:00"); const nEx=s.exercises.filter(e=>e.sets.some(x=>x.done)).length; const vol=Math.round(conv(sessionVol(k))).toLocaleString("en-US"); const tag=prs.has(k)?`<span class="sess-tag">■ pr</span>`:""; const d=sessionDur(k);
+    return `<div class="sess" onclick="A.openSession('${k}')"><div><div class="sess-title">${DOW[dt.getDay()]} ${dt.getDate()} · ${esc(s.label)} ${tag}</div><div class="sess-spec">${nEx} ejercicios · ${vol} ${U()}${d?` · ${fmtDur(d)}`:""}</div></div><span style="color:var(--muted)">→</span></div>`; }).join("")||`<div class="sess"><div class="sess-spec">// ${allFin.length?"sin entrenos este mes":"sin entrenos aún"}</div></div>`;
+  return `<div class="cal-wrap"><div class="cal-nav"><div class="cn${canBack?"":" off"}" ${canBack?`onclick="A.calMove(-1)"`:""} aria-label="mes anterior">‹</div><div class="cal-mo">${MES[mo]} ${y}</div><div class="cn${canFwd?"":" off"}" ${canFwd?`onclick="A.calMove(1)"`:""} aria-label="mes siguiente">›</div></div><div class="cal-dow"><div>l</div><div>m</div><div>m</div><div>j</div><div>v</div><div>s</div><div>d</div></div><div class="cal-grid">${cells}</div>
       <div class="legend"><span><span style="color:var(--green)">■</span> entrenaste</span><span><span style="color:var(--cyan)">■</span> pr</span><span>□ hoy</span></div></div>
     <div class="sess-list">${list}</div>
     <div style="padding:16px 20px"><div class="mbtn" onclick="A.pastLog()">+ registrar entreno pasado</div></div>`;
@@ -972,26 +1000,30 @@ function bodyProgreso(){
   const total=Math.round(lifts.reduce((s,x)=>s+x.d.e1,0));
   const tlvl=bw?slevel(total/bw,[2.75,3.75,5.25,7.25]):null;
   const maxClub=Math.max(...lifts.map(x=>plateClub(conv(x.d.w))),0);
-  const b3rows=lifts.map(x=>{ const lvl=bw?slevel(x.d.e1/bw,x.b.thr):null; const club=plateClub(conv(x.d.w)); return `<div class="b3row"><span class="b3name">${x.b.label}</span>${club>=1?`<span class="club">${club} pl</span>`:""}${lvl!=null?`<span class="b3lvl">${LVL[lvl]}</span>`:""}<span class="b3w">${x.d.e1?conv(x.d.e1):"—"}</span></div>`; }).join("");
-  let chartEx=DB.exercises.find(e=>/banca/i.test(e.name));
-  if(!chartEx||sparkPts(chartEx.id).length<2){ const cand=DB.exercises.map(e=>({e,n:sparkPts(e.id).length})).sort((a,b)=>b.n-a.n)[0]; chartEx=cand?cand.e:null; }
-  const pts=chartEx?sparkPts(chartEx.id):[]; const oneRm=pts.length?conv(pts[pts.length-1]):0; const gain=pts.length>1?Math.round(conv(pts[pts.length-1])-conv(pts[0])):0;
-  const prList=DB.exercises.map(e=>{ let best=0,info=null; Object.keys(DB.sessions).forEach(k=>{ const ex=DB.sessions[k].exercises.find(x=>x.exId===e.id); if(!ex)return; ex.sets.forEach(s=>{ if(isWork(s)){ const v=est1rm(s); if(v>best){best=v;info={kg:s.kg,reps:s.reps,date:k};} } }); }); return info?{name:e.name,val:`${conv(num(info.kg))} ${U()} × ${info.reps}`,date:MES[new Date(info.date+"T12:00:00").getMonth()],e1:best}:null; }).filter(Boolean).sort((a,b)=>b.e1-a.e1).slice(0,5);
+  // id del ejercicio que representa cada básico: el que coincide y tiene más sesiones
+  const liftEx=re=>{ let best=null,n=0; DB.exercises.filter(e=>re.test(e.name)).forEach(e=>{ const c=e1Series(e.id).length; if(c>n){n=c;best=e;} }); return best; };
+  const b3rows=lifts.map(x=>{ const lvl=bw?slevel(x.d.e1/bw,x.b.thr):null; const club=plateClub(conv(x.d.w)); const le=liftEx(x.b.re); return `<div class="b3row${le?" tap":""}" ${le?`onclick="A.chartEx('${le.id}')"`:""}><span class="b3name">${x.b.label}</span>${club>=1?`<span class="club">${club} pl</span>`:""}${lvl!=null?`<span class="b3lvl">${LVL[lvl]}</span>`:""}<span class="b3w">${x.d.e1?conv(x.d.e1):"—"}</span></div>`; }).join("");
+  // la gráfica muestra el ejercicio elegido; si no hay elección válida, banca o el de más datos
+  let chartEx=DB.chartEx?exById(DB.chartEx):null;
+  if(!chartEx||e1Series(chartEx.id).length<2) chartEx=DB.exercises.find(e=>/banca/i.test(e.name));
+  if(!chartEx||e1Series(chartEx.id).length<2){ const cand=DB.exercises.map(e=>({e,n:e1Series(e.id).length})).sort((a,b)=>b.n-a.n)[0]; chartEx=cand?cand.e:null; }
+  const ser=chartEx?e1Series(chartEx.id):[]; const pts=ser.map(x=>x.v); const oneRm=pts.length?conv(pts[pts.length-1]):0; const gain=pts.length>1?Math.round(conv(pts[pts.length-1])-conv(pts[0])):0;
+  const prList=DB.exercises.map(e=>{ let best=0,info=null; Object.keys(DB.sessions).forEach(k=>{ const ex=DB.sessions[k].exercises.find(x=>x.exId===e.id); if(!ex)return; ex.sets.forEach(s=>{ if(isWork(s)){ const v=est1rm(s); if(v>best){best=v;info={kg:s.kg,reps:s.reps,date:k};} } }); }); return info?{id:e.id,name:e.name,val:`${conv(num(info.kg))} ${U()} × ${info.reps}`,date:MES[new Date(info.date+"T12:00:00").getMonth()],e1:best}:null; }).filter(Boolean).sort((a,b)=>b.e1-a.e1).slice(0,5);
   const md=muscleDist(); const mmax=md.length?md[0][1]:1;
   const bwArr=DB.bodyweight.slice().sort((a,b)=>a.date<b.date?-1:1);
   return `${maxClub>=1?`<div class="clubbadge">■ ${maxClub} plate club</div>`:""}
     <div class="section-lbl">big 3 · fuerza</div>
     ${b3rows}
     <div class="b3total"><span class="t">total 1rm est.</span><b>${conv(total)} ${U()}</b>${tlvl!=null?`<span class="b3lvl" style="color:var(--green);border-color:var(--green)">${LVL[tlvl]}</span>`:""}</div>
-    ${chartEx&&pts.length>1?`<div class="prog-block"><div class="prog-row"><div class="prog-name">${esc(chartEx.name)} — 1rm est.</div></div><div class="prog-val">${oneRm} ${U()} <small>${gain>=0?"+":""}${gain} histórico</small></div>${sparkSVG(pts.map(conv),"#00ff88")}</div>`:""}
+    ${chartEx&&pts.length>1?`<div class="prog-block" id="e1chart"><div class="prog-row"><div class="prog-name">${esc(chartEx.name)} — 1rm est.</div><div class="tool" onclick="openChartPick()">cambiar</div></div><div class="prog-val">${oneRm} ${U()} <small>${gain>=0?"+":""}${gain} ${U()} desde ${shortDate(ser[0].k)}</small></div>${sparkSVG(pts.map(conv),"#00ff88")}${sparkAxis(ser[0].k,ser[ser.length-1].k,pts.map(conv))}<div class="mono-note" style="margin-top:8px;font-size:10px">// toca un básico o un récord para verlo aquí</div></div>`:""}
     <div class="section-lbl">sesiones</div>
     <div class="prs-item"><span class="name">entrenos totales</span><span class="val">${finishedDates().length}</span></div>
     <div class="prs-item"><span class="name">este mes</span><span class="val">${monthSessions()}</span></div>
     <div class="prs-item"><span class="name">duración media</span><span class="val">${avgDur()!=null?fmtDur(avgDur()):"—"}</span></div>
     <div class="section-lbl">récords personales</div>
-    ${prList.map(p=>`<div class="prs-item"><span class="name">${esc(p.name)}</span><span class="val">${esc(p.val)} <span class="date" style="color:var(--cyan)">${p.date}</span></span></div>`).join("")||`<div class="prs-item"><span class="name">// sin récords aún</span></div>`}
+    ${prList.map(p=>`<div class="prs-item tap" onclick="A.chartEx('${p.id}')"><span class="name">${esc(p.name)}</span><span class="val">${esc(p.val)} <span class="date" style="color:var(--cyan)">${p.date}</span></span></div>`).join("")||`<div class="prs-item"><span class="name">// sin récords aún</span></div>`}
     <div class="section-lbl">peso corporal</div>
-    <div class="prog-block">${bwArr.length?`<div class="prog-val" style="font-size:22px">${conv(bwArr[bwArr.length-1].weight)} ${U()} <small>${bwArr.length>1?((bwArr[bwArr.length-1].weight-bwArr[0].weight>=0?"+":"")+(Math.round((conv(bwArr[bwArr.length-1].weight)-conv(bwArr[0].weight))*10)/10)):""} total</small></div>${sparkSVG(bwArr.map(x=>conv(x.weight)),"#00d4ff")}`:`<div class="mono-note">// sin registros</div>`}<div class="mbtn green" style="margin-top:12px" onclick="A.openBodyweight()">+ registrar peso</div></div>
+    <div class="prog-block">${bwArr.length?`<div class="prog-val" style="font-size:22px">${conv(bwArr[bwArr.length-1].weight)} ${U()} ${bwArr.length>1?`<small>${(bwArr[bwArr.length-1].weight-bwArr[0].weight>=0?"+":"")+(Math.round((conv(bwArr[bwArr.length-1].weight)-conv(bwArr[0].weight))*10)/10)} ${U()} desde ${shortDate(bwArr[0].date)}</small>`:""}</div>${sparkSVG(bwArr.map(x=>conv(x.weight)),"#00d4ff")}${bwArr.length>1?sparkAxis(bwArr[0].date,bwArr[bwArr.length-1].date,bwArr.map(x=>conv(x.weight))):""}`:`<div class="mono-note">// sin registros</div>`}<div class="mbtn green" style="margin-top:12px" onclick="A.openBodyweight()">+ registrar peso</div></div>
     <div class="section-lbl">volumen por músculo · 30d</div>
     ${md.map(m=>`<div class="mbar"><div class="ml">${m[0].toLowerCase()}</div><div class="mt"><div class="mf" style="width:${Math.max(4,m[1]/mmax*100)}%"></div></div><div class="mv">${Math.round(conv(m[1]))}</div></div>`).join("")||`<div class="mono-note" style="padding:6px 20px">// sin volumen en 30 días</div>`}
     <div style="padding:16px 20px"><div class="mbtn green" onclick="A.openShareBig3()">↗ compartir big 3</div></div>`;
@@ -1023,7 +1055,7 @@ function screenPerfil(){
       <div class="psec"><h4>respaldo</h4>
         <div class="btnrow"><div class="mbtn" onclick="A.exportData()">exportar</div><div class="mbtn" onclick="A.openImport()">importar</div></div>${s.demo?`<div class="btnrow"><div class="mbtn" onclick="A.askFresh()">borrar datos de ejemplo</div></div>`:""}<div class="btnrow"><div class="mbtn red" onclick="A.wipe()">borrar todo</div></div>${backupNote()}
       </div>
-      <div class="foot-note">// tus datos viven en tu dispositivo.${s.demo?" el historial inicial es de ejemplo — bórralo cuando quieras.":""}</div>
+      <div class="foot-note">${_persisted===true?"// almacenamiento protegido: el navegador no lo borra solo. ":_persisted===false?"// el navegador podría borrar los datos si falta espacio — exporta seguido. ":""}// tus datos viven en tu dispositivo.${s.demo?" el historial inicial es de ejemplo — bórralo cuando quieras.":""}</div>
     </div>
   </div>`;
 }
@@ -1035,7 +1067,7 @@ function screenDatos(){
   const now=new Date();
   const segs=["historial","progreso"].map(k=>`<div class="${k===sub?"on":""}" onclick="A.dataTab('${k}')">${k}</div>`).join("");
   return `<div class="content">
-    <div class="page-head"><div class="page-title">datos</div>${sub==="historial"?`<div class="month">${MES[now.getMonth()]} ${now.getFullYear()}</div>`:""}</div>
+    <div class="page-head"><div class="page-title">datos</div></div>
     <div class="dseg">${segs}</div>
     ${sub==="progreso"?bodyProgreso():bodyHistorial()}
   </div>`;
@@ -1080,9 +1112,15 @@ function toast(msg,label,fn){ const t=document.getElementById("toast"); t.innerH
 window.toast=toast;
 
 let _routineDay=new Date().getDay();
+function openChartPick(){
+  const rows=DB.exercises.map(e=>({e,n:e1Series(e.id).length})).filter(x=>x.n>=2).sort((a,b)=>b.n-a.n)
+    .map(x=>`<div class="opt" onclick="closeSheet();A.chartEx('${x.e.id}')"><span><span class="pname">${esc(x.e.name.toLowerCase())}</span><small class="pnote">${x.n} sesiones</small></span><span class="m">${x.e.id===DB.chartEx?"✓":"→"}</span></div>`).join("");
+  openSheet(`<h3>ver progreso de</h3><div class="list" style="max-height:56vh">${rows||`<div class="mono-note">// sin datos aún</div>`}</div>`);
+}
+window.openChartPick=openChartPick;
 function openWelcome(){
   const n=Object.keys(DB.sessions).length;
-  openSheet(`<h3>bienvenido<span class="dot">.</span></h3>
+  openSheet(`<h3>hola<span class="dot">.</span></h3>
     <div class="mono-note" style="margin-bottom:14px">// todo se guarda en este dispositivo. sin cuenta, sin nube, sin registro.</div>
     <div class="impsum"><span>ahora ves</span><b>${n} entrenos de ejemplo</b></div>
     <div class="impsum"><span>tu rutina</span><b>ppl — empuje / jalón / pierna</b></div>
@@ -1515,6 +1553,9 @@ if(!DB.settings.onboarded) openWelcome();
   setTimeout(()=>{ b.classList.add("gone"); setTimeout(()=>b.remove(),340); },
     Math.max(0, 420-(Date.now()-(window.BOOT_T0||0)))); })();
 if("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(()=>{});
+// pedir que el navegador no borre los datos por falta de espacio (sin cuenta, son la única copia)
+let _persisted=null;
+(async()=>{ try{ if(!navigator.storage||!navigator.storage.persist) return; _persisted=await navigator.storage.persisted(); if(!_persisted) _persisted=await navigator.storage.persist(); if(DB.tab==="ajustes") render(); }catch(e){} })();
 </script>
 <script type="module">
 import * as pdfjsLib from "./pdfjs/pdf.min.mjs";
