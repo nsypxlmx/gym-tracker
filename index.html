@@ -146,24 +146,35 @@ input:focus,select:focus,textarea:focus{outline:none; box-shadow:3px 3px 0 var(-
 .center-cta{flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:20px; padding:24px; text-align:center}
 .wk-head{padding:16px 20px; border-bottom:1.5px solid var(--line); display:flex; justify-content:space-between; align-items:center}
 .wk-title{font-size:17px; font-weight:700; text-transform:lowercase}
-.stopbtn{cursor:pointer; font-size:11px; letter-spacing:.1em; text-transform:uppercase; border:1.5px solid var(--red); color:var(--red); padding:4px 8px}
+.stopbtn{cursor:pointer; font-size:11px; letter-spacing:.1em; text-transform:uppercase; border:1.5px solid var(--red); color:var(--red); padding:10px 12px}
 .ex-block{padding:20px; border-bottom:1.5px solid var(--line-soft)}
 .ex-top{display:flex; justify-content:space-between; align-items:baseline; gap:8px}
 .ex-name{font-size:16px; font-weight:700; text-transform:lowercase; flex:1 1 auto; min-width:0; overflow-wrap:anywhere}
 .ex-name small{font-weight:400; color:var(--muted); font-size:12px}
-.ex-tools{display:flex; align-items:center; gap:10px; flex:0 0 auto}
+.ex-tools{display:flex; align-items:center; gap:6px; flex:0 0 auto}
 /* historial de la última vez: puede ser largo, se desliza en vez de cortarse */
 .ex-last{font-size:12px; color:var(--cyan); white-space:nowrap; margin-top:6px; overflow-x:auto; scrollbar-width:none}
 .ex-last::-webkit-scrollbar{display:none}
-.tool{cursor:pointer; font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); border:1.5px solid var(--muted); padding:3px 6px}
+.tool{cursor:pointer; font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); border:1.5px solid var(--muted); padding:8px 9px}
+.tool.on{color:var(--green); border-color:var(--green)}
 .set-head,.set-row{display:grid; gap:8px; align-items:center}
 .set-head{margin-top:14px; font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted)}
 .set-row{margin-top:8px}
 .set-n{font-size:14px; cursor:pointer; user-select:none; -webkit-user-select:none; -webkit-touch-callout:none; touch-action:manipulation; text-align:left; padding:10px 0}
-.set-in{background:var(--input); padding:10px 8px; font-size:15px; text-align:center; width:100%; border-radius:0; border:1.5px solid var(--dim); color:var(--txt)}
-.set-check{cursor:pointer; text-align:center; border:1.5px solid var(--line); padding:9px 0; font-size:15px}
+.set-in{background:var(--input); padding:12px 8px; font-size:15px; text-align:center; width:100%; border-radius:0; border:1.5px solid var(--dim); color:var(--txt)}
+.set-check{cursor:pointer; text-align:center; border:1.5px solid var(--line); padding:12px 0; font-size:15px}
 .set-check:hover{background:var(--green); color:var(--ink); border-color:var(--green)}
-.set-donemark{text-align:center; color:var(--green); font-size:18px; font-weight:700; cursor:pointer; padding:7px 0}
+.set-donemark{text-align:center; color:var(--green); font-size:18px; font-weight:700; cursor:pointer; padding:10px 0}
+.bumprow{display:grid; gap:8px; margin-top:6px}
+.bump{display:flex; gap:6px}
+.bump span{flex:1; cursor:pointer; text-align:center; font-size:12px; padding:9px 0; border:1.5px solid var(--dim); color:var(--muted); user-select:none; -webkit-user-select:none; touch-action:manipulation}
+.bump span:active{background:var(--green); color:var(--ink); border-color:var(--green)}
+.rowlast{font-size:10.5px; color:var(--cyan); margin:6px 0 2px 36px; opacity:.85}
+.sumgrid{display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:10px}
+.sumgrid div{border:1.5px solid var(--dim); padding:12px 8px; text-align:center}
+.sumgrid b{display:block; font-size:19px; color:var(--green)}
+.sumgrid span{font-size:10px; color:var(--muted); letter-spacing:.06em}
+.stepper .b.big{padding:12px 16px; font-size:14px}
 .actrow{display:flex; gap:10px; margin-top:14px}
 .actbtn{flex:1; cursor:pointer; text-align:center; font-size:12.5px; font-weight:700; letter-spacing:.04em; text-transform:lowercase; padding:11px 8px; border:1.5px solid var(--acc); color:var(--acc); background:transparent; box-shadow:3px 3px 0 var(--dim); transition:background .14s, color .14s, box-shadow .1s, transform .1s}
 .actbtn:hover{background:var(--acc); color:var(--ink); box-shadow:3px 3px 0 var(--acc)}
@@ -179,7 +190,7 @@ input:focus,select:focus,textarea:focus{outline:none; box-shadow:3px 3px 0 var(-
 .rest-bar{padding:16px 20px; border-bottom:1.5px solid var(--line-soft); display:flex; justify-content:space-between; align-items:center; background:var(--card)}
 .rest-big{font-size:32px; font-weight:700; letter-spacing:-.02em}
 .rest-btns{display:flex; gap:8px}
-.rest-btns div{cursor:pointer; border:1.5px solid var(--line); padding:6px 10px; font-size:12px}
+.rest-btns div{cursor:pointer; border:1.5px solid var(--line); padding:11px 10px; font-size:12px}
 .rest-btns div:hover{background:var(--line); color:var(--ink)}
 .rest-btns .skip{border-color:var(--green); color:var(--green)}
 .wk-foot{padding:14px 20px; display:flex; justify-content:space-between; align-items:center; margin-top:auto}
@@ -520,7 +531,7 @@ const MODS={
 function baseDefault(){
   return {tab:"inicio", editMode:false, exercises:[], routine:{0:[],1:[],2:[],3:[],4:[],5:[],6:[]}, labels:{0:"descanso",1:"empuje",2:"jalón",3:"pierna",4:"empuje",5:"jalón",6:"pierna"},
     sessions:{}, bodyweight:[], stash:{}, customPresets:{},
-    settings:{unit:"kg", theme:"auto", restDefault:90, showRpe:false, sound:true, lastExport:"", barKg:20, barLb:45, modOrder:["racha","volumen","pr","big3","peso"], hidden:["descanso","musculo","sesiones","proximo"], seeded:false, onboarded:false, demo:false, demoUntil:"", unitKg:true, keepAwake:true},
+    settings:{unit:"kg", theme:"auto", restDefault:90, restNotif:false, showRpe:false, sound:true, lastExport:"", barKg:20, barLb:45, modOrder:["racha","volumen","pr","big3","peso"], hidden:["descanso","musculo","sesiones","proximo"], seeded:false, onboarded:false, demo:false, demoUntil:"", unitKg:true, keepAwake:true},
     run:{active:false, exIdx:0, rest:0, resting:false, key:"", restEnd:0}};
 }
 let DB;
@@ -601,6 +612,9 @@ const KGLB=2.20462;
 const conv=v=>U()==="lb"?Math.round(v*KGLB):Math.round(v*10)/10;
 const toKg=v=>{ const n=parseFloat(v)||0; return U()==="lb"?Math.round(n/KGLB*100)/100:n; };
 const dsp=v=>{ const n=parseFloat(v); return n?String(conv(n)):""; };
+// descanso propio del ejercicio (catálogo) o el general
+function restFor(exId){ const e=exById(exId); return (e&&e.rest)||DB.settings.restDefault; }
+const STEP=()=>U()==="kg"?2.5:5;
 function num(v){ return parseFloat(v)||0; }
 function est1rm(s){ const w=num(s.kg),r=parseInt(s.reps)||0; return w>0? w*(1+r/30):0; }
 // serie que cuenta para récords y volumen: hecha y no de calentamiento
@@ -704,15 +718,21 @@ const A={
   showMod(id){ DB.settings.hidden=DB.settings.hidden.filter(x=>x!==id); DB.settings.modOrder.push(id); save(); render(); },
   startWorkout(){ const s=startTodaySession(); if(!s.startedAt) s.startedAt=Date.now(); DB.run={active:true,key:DB.run.key,exIdx:0,rest:0,resting:false,restEnd:0}; set({tab:"entreno"}); },
   cycleType(ei,i){ const ex=runEx(ei); if(!ex) return; const o=["work","warm","drop"]; const s=ex.sets[i]; s.type=o[(o.indexOf(s.type||"work")+1)%3]; save(); render(); },
-  setKg(ei,i,v){ const ex=runEx(ei); if(!ex) return; ex.sets[i].kg=String(v).trim()===""?"":toKg(v); save(); },
-  setReps(ei,i,v){ const ex=runEx(ei); if(!ex) return; ex.sets[i].reps=v; save(); },
+  // ek/er = el usuario tocó ese valor: se hereda a las series siguientes que siguen intactas
+  setKg(ei,i,v){ const ex=runEx(ei); if(!ex) return; ex.sets[i].kg=String(v).trim()===""?"":toKg(v); ex.sets[i].ek=true; save(); },
+  setReps(ei,i,v){ const ex=runEx(ei); if(!ex) return; ex.sets[i].reps=v; ex.sets[i].er=true; save(); },
+  bump(ei,i,f,d){ const ex=runEx(ei); if(!ex||!ex.sets[i]) return; const x=ex.sets[i];
+    if(f==="kg"){ const cur=parseFloat(dsp(x.kg))||0; x.kg=toKg(Math.max(0,Math.round((cur+d)*100)/100)); x.ek=true; }
+    else { x.reps=String(Math.max(0,(parseInt(x.reps)||0)+d)); x.er=true; }
+    vibrate(6); save(); render(); },
   setRpe(ei,i,v){ const ex=runEx(ei); if(!ex) return; ex.sets[i].rpe=v; save(); },
   addSet(ei){ const ex=runEx(ei); if(!ex) return; const l=ex.sets[ex.sets.length-1]; ex.sets.push({kg:l?l.kg:"",reps:l?l.reps:"",done:false,type:"work",rpe:""}); _newSet=ei+":"+(ex.sets.length-1); vibrate(10); save(); render(); _newSet=-1; },
   checkSet(ei,i){ audio(); const sess=curSession(); const ex=runEx(ei); if(!ex) return; const s=ex.sets[i]; s.done=true;
     const e1=est1rm(s); const isPr=s.type!=="warm"&&e1>0&&e1>bestE1RM(ex.exId,curKey())&&e1>=topE1Today(ex.exId);
     // en superserie se encadena sin pausa hasta cerrar la ronda
     const g=groupAt(sess.exercises,ei); const members=[]; for(let j=g.start;j<=g.end;j++) members.push(j);
-    if(roundComplete(sess,members,i)){ DB.run.restEnd=Date.now()+DB.settings.restDefault*1000; DB.run.resting=true; }
+    for(let j=i+1;j<ex.sets.length;j++){ const n=ex.sets[j]; if(n.done||(n.type||"work")!==(s.type||"work")) continue; if(s.ek&&!n.ek) n.kg=s.kg; if(s.er&&!n.er) n.reps=s.reps; }
+    if(roundComplete(sess,members,i)){ const secs=Math.max(...members.map(m=>restFor(sess.exercises[m].exId))); DB.run.restEnd=Date.now()+secs*1000; DB.run.resting=true; }
     save(); if(isPr){ vibrate([25,40,25,40,90]); render(); showPR(ex.name,s); } else { vibrate(12); render(); } },
   // un check por error se deshace tocando la marca; los récords se recalculan solos de los datos
   uncheckSet(ei,i){ const ex=runEx(ei); if(!ex||!ex.sets[i]) return; ex.sets[i].done=false; vibrate(10); save(); render();
@@ -724,13 +744,20 @@ const A={
   restSkip(){ DB.run.resting=false; DB.run.restEnd=0; save(); tick(); },
   toggleWake(){ DB.settings.keepAwake=!DB.settings.keepAwake; save(); render(); },
   nextEx(){ const s=curSession(); const g=groupAt(s.exercises,DB.run.exIdx); if(g.end<s.exercises.length-1){ DB.run.exIdx=g.end+1; DB.run.resting=false; DB.run.restEnd=0; save(); render(); } else A.finish(); },
-  finish(){ const s=curSession();
+  finish(force){ const s=curSession();
     // sin ninguna serie marcada no hubo entreno: guardarlo ensuciaría racha e historial
     if(s && !s.exercises.some(e=>e.sets.some(x=>x.done))){
       openSheet(`<h3>no marcaste ninguna serie</h3><div class="mono-note" style="margin-bottom:14px">// si lo guardas contaría como un entreno vacío en tu racha y tu historial.</div><div class="btnrow"><div class="mbtn" onclick="closeSheet()">seguir entrenando</div><div class="mbtn red" onclick="A.discard()">descartar</div></div>`);
       return;
     }
-    if(s){ s.finished=true; if(s.startedAt) s.endedAt=Date.now(); } DB.run.active=false; DB.run.resting=false; DB.run.restEnd=0; DB.run.key=""; set({tab:"datos",dataTab:"historial"}); },
+    const left=s?s.exercises.reduce((n,e)=>n+e.sets.filter(x=>!x.done).length,0):0;
+    if(left&&!force){
+      openSheet(`<h3>¿terminar entreno?</h3><div class="mono-note" style="margin-bottom:14px">// quedan ${left} serie${left===1?"":"s"} sin marcar. no cuentan para volumen ni récords.</div><div class="btnrow"><div class="mbtn" onclick="closeSheet()">seguir</div><div class="mbtn green" onclick="closeSheet();A.finish(true)">terminar</div></div>`);
+      return;
+    }
+    const k=curKey();
+    if(s){ s.finished=true; if(s.startedAt) s.endedAt=Date.now(); } DB.run.active=false; DB.run.resting=false; DB.run.restEnd=0; DB.run.key=""; set({tab:"datos",dataTab:"historial"});
+    if(s) openSummary(k); },
   discard(){ delete DB.sessions[curKey()]; DB.run={active:false,exIdx:0,rest:0,resting:false,key:"",restEnd:0}; save(); closeSheet(); set({tab:"inicio"}); toast("entreno descartado"); },
   plateFromEx(ei){ const ex=runEx(ei); if(!ex) return; let mw=0; ex.sets.forEach(s=>{ const w=num(s.kg); if(w>mw)mw=w; }); openPlate(mw?conv(mw):""); },
   openPlate(){ openPlate(""); },
@@ -752,6 +779,16 @@ const A={
   openShareBig3(){ openShareSheet("big3",big3ShareData()); },
   shareSession(k){ openShareSession(k); },
   openSession(k){ openSessionDetail(k); },
+  openExRest(ei){ const ex=runEx(ei); if(!ex) return; const e=exById(ex.exId); if(!e) return; _restEx=e.id;
+    openSheet(`<h3>descanso · ${esc(e.name.toLowerCase())}</h3><div class="mono-note" style="margin-bottom:14px">// solo para este ejercicio, en todas tus sesiones. general: ${fmt(DB.settings.restDefault)}</div>
+      <div class="stepper" style="justify-content:center;gap:18px"><div class="b big" onclick="A.exRest(-15)">−15s</div><div class="v" id="exrestv" style="font-size:28px">${fmt(restFor(e.id))}</div><div class="b big" onclick="A.exRest(15)">+15s</div></div>
+      <div class="btnrow" style="margin-top:18px"><div class="mbtn" onclick="A.exRest(0)">usar el general</div><div class="mbtn green" onclick="closeSheet();render()">listo</div></div>`); },
+  exRest(d){ const e=exById(_restEx); if(!e) return; if(d===0) delete e.rest; else e.rest=Math.max(15,restFor(e.id)+d); save();
+    const v=document.getElementById("exrestv"); if(v) v.textContent=fmt(restFor(e.id)); },
+  toggleNotif(){ const st=DB.settings;
+    if(st.restNotif){ st.restNotif=false; save(); render(); return; }
+    if(!("Notification" in window)){ toast("este navegador no permite avisos — instala la app"); return; }
+    Notification.requestPermission().then(p=>{ st.restNotif=p==="granted"; if(p!=="granted") toast("sin permiso para avisos"); save(); render(); }); },
   nextQuote(){ DB.quoteN=((DB.quoteN||0)+1)%QUOTES.length; save(); const el=document.getElementById("quote"); if(el){ el.outerHTML=quoteHTML(); } },
   chartEx(id){ if(e1Series(id).length<2){ toast("aún no hay datos suficientes"); return; } DB.chartEx=id; save(); render();
     const c=document.getElementById("e1chart"); if(c) c.scrollIntoView({behavior:"smooth",block:"center"}); },
@@ -964,16 +1001,19 @@ function exBlockHTML(s,ei,isSS,round,lastOfGroup){
     const ib=x.done?"var(--dim)":(cur?"var(--green)":"var(--dim)"); const ic=x.done?"var(--muted)":"var(--txt)";
     const rpeCell=rpe?`<input class="set-in" style="border-color:${ib};color:var(--amber)" value="${esc(x.rpe)}" onchange="A.setRpe(${ei},${i},this.value)" inputmode="decimal" placeholder="rpe">`:"";
     const check=x.done?`<div class="set-donemark" onclick="A.uncheckSet(${ei},${i})" title="desmarcar">✓</div>`:`<div class="set-check" onclick="A.checkSet(${ei},${i})">✓</div>`;
+    // la serie activa lleva atajos ± y la referencia de esa misma serie la vez pasada
+    const pv=prev&&prev[i]; const st=STEP();
+    const extra=(cur&&!x.done)?`<div class="bumprow" style="grid-template-columns:${cols}"><div></div><div class="bump"><span onclick="A.bump(${ei},${i},'kg',-${st})">−${st}</span><span onclick="A.bump(${ei},${i},'kg',${st})">+${st}</span></div><div class="bump"><span onclick="A.bump(${ei},${i},'reps',-1)">−1</span><span onclick="A.bump(${ei},${i},'reps',1)">+1</span></div>${rpe?"<div></div>":""}<div></div></div>${pv?`<div class="rowlast">// serie ${i+1} la última vez: ${dsp(pv.kg)||0} × ${esc(pv.reps)}</div>`:""}`:"";
     return `<div class="set-row${(ei+":"+i)===_newSet?" rowin":""}" style="grid-template-columns:${cols}">
       <div class="set-n" style="color:${col};font-weight:${cur?700:400}" onpointerdown="lpStart(event,${ei},${i})" onpointerup="lpEnd()" onpointerleave="lpEnd()" onpointercancel="lpEnd()" oncontextmenu="return false" onclick="lpClick(${ei},${i})">${lbl}</div>
       <input class="set-in" style="border-color:${ib};color:${ic}" value="${esc(dsp(x.kg))}" onchange="A.setKg(${ei},${i},this.value)" inputmode="decimal">
       <input class="set-in" style="border-color:${ib};color:${ic}" value="${esc(x.reps)}" onchange="A.setReps(${ei},${i},this.value)" inputmode="numeric">
       ${rpeCell}${check}
-    </div>`;
+    </div>${extra}`;
   }).join("");
   const pos=isSS?esc((ex.muscle||"").toLowerCase()):`${ei+1}/${s.exercises.length}`;
   return `<div class="ex-block${isSS?" ss":""}">
-      <div class="ex-top"><div class="ex-name">${esc(ex.name)} <small>${pos}</small></div><div class="ex-tools"><div class="tool" onclick="A.openExNote(${ei})">nota</div><div class="tool" onclick="A.plateFromEx(${ei})">discos</div></div></div>
+      <div class="ex-top"><div class="ex-name">${esc(ex.name)} <small>${pos}</small></div><div class="ex-tools"><div class="tool${exById(ex.exId)&&exById(ex.exId).rest?" on":""}" onclick="A.openExRest(${ei})" title="descanso de este ejercicio">${fmt(restFor(ex.exId))}</div><div class="tool" onclick="A.openExNote(${ei})">nota</div><div class="tool" onclick="A.plateFromEx(${ei})">discos</div></div></div>
       <div class="ex-last">últ: ${esc(last)}</div>
       ${exNoteHTML(ex)}
       <div class="set-head" style="grid-template-columns:${cols}"><div>set</div><div>${U()}</div><div>reps</div>${rpe?"<div>rpe</div>":""}<div></div></div>
@@ -1056,6 +1096,7 @@ function screenPerfil(){
         <div class="prow"><div class="plabel">descanso por defecto</div><div class="stepper"><div class="b" onclick="A.defMinus()">−</div><div class="v">${fmt(s.restDefault)}</div><div class="b" onclick="A.defPlus()">+</div></div></div>
         <div class="prow"><div class="plabel">mostrar rpe por serie</div><div class="toggle ${s.showRpe?"on":""}" onclick="A.toggleRpe()"></div></div>
         <div class="prow"><div class="plabel">sonido al terminar descanso</div><div class="toggle ${s.sound?"on":""}" onclick="A.toggleSound()"></div></div>
+        <div class="prow"><div class="plabel">aviso al terminar descanso<div class="mono-note" style="font-size:10px;margin-top:2px">// con la app en segundo plano</div></div><div class="toggle ${s.restNotif?"on":""}" onclick="A.toggleNotif()"></div></div>
         <div class="prow"><div class="plabel">pantalla encendida en entreno</div><div class="toggle ${s.keepAwake!==false?"on":""}" onclick="A.toggleWake()"></div></div>
       </div>
       <div class="psec"><h4>herramientas</h4>
@@ -1122,6 +1163,19 @@ function toast(msg,label,fn){ const t=document.getElementById("toast"); t.innerH
 window.toast=toast;
 
 let _routineDay=new Date().getDay();
+let _restEx=null;
+// resumen al terminar: lo que importa de la sesión y contra qué se compara
+function openSummary(k){ const s=DB.sessions[k]; if(!s) return;
+  const sets=s.exercises.reduce((n,e)=>n+e.sets.filter(isWork).length,0); const vol=sessionVol(k); const du=sessionDur(k);
+  const prev=finishedDates().filter(x=>x<k&&DB.sessions[x].label===s.label).sort().pop();
+  let cmp=""; if(prev){ const pv=sessionVol(prev); if(pv>0){ const pct=Math.round((vol-pv)/pv*100); cmp=`<span style="color:${pct>=0?"var(--green)":"var(--orange)"}">${pct>=0?"+":""}${pct}%</span> vs ${shortDate(prev)}`; } }
+  const prs=s.exercises.map(e=>{ let m=0,best=null; e.sets.forEach(x=>{ if(isWork(x)){ const v=est1rm(x); if(v>m){m=v;best=x;} } }); return m>0&&m>bestE1RM(e.exId,k)?{name:e.name,x:best,e1:m}:null; }).filter(Boolean);
+  const prHTML=prs.map(p=>`<div class="impsum"><span style="color:var(--cyan)">■ ${esc(p.name.toLowerCase())}</span><b>${dsp(p.x.kg)||0} ${U()} × ${p.x.reps} · 1rm ${Math.round(conv(p.e1))}</b></div>`).join("");
+  openSheet(`<h3>entreno terminado<span class="dot">.</span></h3><div class="mono-note" style="margin-bottom:12px">// ${esc(s.label)} · ${shortDate(k)}</div>
+    <div class="sumgrid"><div><b>${du?fmtDur(du):"—"}</b><span>duración</span></div><div><b>${sets}</b><span>series</span></div><div><b>${Math.round(conv(vol)).toLocaleString("en-US")}</b><span>${U()} volumen</span></div></div>
+    ${cmp?`<div class="impsum"><span>contra la última ${esc(s.label)}</span><b>${cmp}</b></div>`:""}
+    ${prs.length?`<div class="section-lbl" style="padding:14px 0 4px">récords de hoy</div>${prHTML}`:""}
+    <div class="btnrow" style="margin-top:16px"><div class="mbtn" onclick="closeSheet();openShareSession('${k}')">↗ compartir</div><div class="mbtn green" onclick="closeSheet()">listo</div></div>`); }
 function openChartPick(){
   const rows=DB.exercises.map(e=>({e,n:e1Series(e.id).length})).filter(x=>x.n>=2).sort((a,b)=>b.n-a.n)
     .map(x=>`<div class="opt" onclick="closeSheet();A.chartEx('${x.e.id}')"><span><span class="pname">${esc(x.e.name.toLowerCase())}</span><small class="pnote">${x.n} sesiones</small></span><span class="m">${x.e.id===DB.chartEx?"✓":"→"}</span></div>`).join("");
@@ -1547,7 +1601,15 @@ async function syncWake(){ if(!("wakeLock" in navigator)||_wakeBusy) return;
   try{ if(want&&!_wake){ _wake=await navigator.wakeLock.request("screen"); _wake.addEventListener("release",()=>{ _wake=null; }); }
        else if(!want&&_wake){ const w=_wake; _wake=null; await w.release(); } }catch(e){ _wake=null; }
   _wakeBusy=false; }
-document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="visible") tick(); syncWake(); });
+// aviso de fin de descanso: solo se programa al salir de la app; al volver se cancela.
+// es de mejor esfuerzo — si el sistema congela la página, el temporizador no corre (ios lo hace siempre)
+let _notifT=null;
+function scheduleRestNotif(){ clearTimeout(_notifT); if(!DB.run.resting||!DB.settings.restNotif||!("Notification" in window)||Notification.permission!=="granted") return;
+  const ms=DB.run.restEnd-Date.now(); if(ms<=0) return;
+  const s=curSession(); const g=s?groupAt(s.exercises,DB.run.exIdx):null;
+  _notifT=setTimeout(()=>{ navigator.serviceWorker&&navigator.serviceWorker.ready.then(r=>r.showNotification("descanso terminado",{body:g?"// a darle: "+groupNames(s,g):"// a darle",tag:"rest",renotify:true,vibrate:[200,100,200],icon:"icon-192.png"})).catch(()=>{}); },ms); }
+function clearRestNotif(){ clearTimeout(_notifT); try{ navigator.serviceWorker&&navigator.serviceWorker.ready.then(r=>r.getNotifications({tag:"rest"})).then(ns=>ns&&ns.forEach(n=>n.close())).catch(()=>{}); }catch(e){} }
+document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="visible"){ clearRestNotif(); tick(); } else scheduleRestNotif(); syncWake(); });
 // mantener el nº de serie = borrarla (un toque sigue cambiando el tipo)
 let _lpT=null, _lpFired=false;
 window.lpStart=(e,ei,i)=>{ _lpFired=false; clearTimeout(_lpT); _lpT=setTimeout(()=>{ _lpFired=true; A.delSet(ei,i); },550); };

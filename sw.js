@@ -1,4 +1,4 @@
-const CACHE="gymtracker-mono-v8";
+const CACHE="gymtracker-mono-v9";
 // las 18 pantallas de arranque de ios no se precachean: cada equipo pide solo la suya,
 // y el fetch handler (cache-first para estáticos) la guarda en el primer arranque online
 const ASSETS=["./","./index.html","./manifest.json","./icon-192.png","./icon-512.png","./icon-512-maskable.png","./icon-180.png","./icon-32.png","./pdfjs/pdf.min.mjs","./pdfjs/pdf.worker.min.mjs"];
@@ -15,3 +15,6 @@ self.addEventListener("fetch",e=>{ if(e.request.method!=="GET")return;
     e.respondWith(caches.match(req).then(h=>h||fetch(req).then(r=>{const c=r.clone();caches.open(CACHE).then(x=>x.put(req,c)).catch(()=>{});return r;})));
   }
 });
+// tocar el aviso de descanso vuelve a la app abierta (o la abre)
+self.addEventListener("notificationclick",e=>{ e.notification.close();
+  e.waitUntil(self.clients.matchAll({type:"window",includeUncontrolled:true}).then(cs=>{ const c=cs.find(x=>"focus" in x); return c?c.focus():self.clients.openWindow("./"); })); });
