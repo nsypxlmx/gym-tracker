@@ -132,6 +132,10 @@ input:focus,select:focus,textarea:focus{outline:none; box-shadow:3px 3px 0 var(-
 .addrow{grid-column:1/-1; display:flex; flex-wrap:wrap; gap:8px; align-items:center}
 .addrow span{font-size:11px; color:var(--muted)}
 .chip{cursor:pointer; font-size:11px; letter-spacing:.08em; text-transform:uppercase; border:1.5px dashed var(--muted); color:var(--muted); padding:4px 8px}
+.quote{margin-top:12px; font-size:12px; line-height:1.5; color:var(--green); opacity:.85; cursor:pointer; user-select:none; animation:qin .35s ease both}
+.quote .qa{color:var(--muted)}
+@keyframes qin{from{opacity:0; transform:translateY(3px)}to{opacity:.85; transform:none}}
+@media (prefers-reduced-motion:reduce){.quote{animation:none}}
 .home-cta{padding:20px 20px 4px}
 .home-cta .btn-primary{padding:16px}
 .btn-primary{cursor:pointer; background:var(--green); color:var(--ink); font-weight:700; font-size:17px; text-transform:lowercase; text-align:center; padding:18px; box-shadow:5px 5px 0 var(--line)}
@@ -666,6 +670,8 @@ function monthSessions(){ const p=todayKey().slice(0,7); return finishedDates().
 function nextTrainDay(){ for(let i=1;i<=7;i++){ const d=new Date(); d.setDate(d.getDate()+i); const wd=d.getDay(); if((DB.routine[wd]||[]).length) return {dow:DOW[wd], label:DB.labels[wd]||"entreno", days:i, count:DB.routine[wd].length}; } return null; }
 function big3Total(){ return Math.round(BIG3.reduce((s,b)=>s+bigLift(b.re).e1,0)); }
 function miniSpark(vals,color){ if(vals.length<2) return ""; const W=100,H=26; const mn=Math.min(...vals),mx=Math.max(...vals),rg=(mx-mn)||1; const st=W/(vals.length-1); const d=vals.map((v,i)=>(i?"L":"M")+(i*st).toFixed(1)+" "+(H-((v-mn)/rg)*H).toFixed(1)).join(" "); return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="width:100%;height:26px;display:block;margin-top:8px"><path class="sparkdraw" d="${d}" fill="none" stroke="${color}" stroke-width="2" vector-effect="non-scaling-stroke"/></svg>`; }
+// frases del inicio: una distinta por cada apertura, en orden, sin repetir hasta dar la vuelta
+const QUOTES=[["la barra no sabe si tienes ganas. solo sabe si llegaste.", ""], ["una serie más. siempre hay una serie más.", ""], ["el progreso es aburrido. hazlo igual.", ""], ["light weight, baby!", "ronnie coleman"], ["nadie se arrepiente de haber entrenado.", ""], ["2.5 kg más que la última vez. ese es todo el plan.", ""], ["la constancia le gana al talento que no entrena.", ""], ["no tiene que ser perfecto. tiene que ser hoy.", ""], ["el descanso es parte del entreno. el sofá no.", ""], ["el hierro nunca te miente.", "henry rollins"], ["lo difícil de hoy es el calentamiento de mañana.", ""], ["la motivación va y viene. la rutina se queda.", ""], ["cada récord empezó como una serie fea.", ""], ["tu único rival está en el historial.", ""], ["entrena para quien serás en un año.", ""], ["las últimas tres o cuatro repeticiones son las que hacen crecer el músculo.", "arnold schwarzenegger"], ["cuenta las series, no las excusas.", ""], ["hoy no hacen falta ganas. hace falta llegar.", ""], ["el músculo no crece en el gimnasio: crece cuando vuelves.", ""], ["lento también es progreso.", ""], ["una mala sesión le gana a ninguna sesión.", ""], ["todos quieren ser culturistas, pero nadie quiere levantar pesado.", "ronnie coleman"], ["apunta, levanta, repite.", ""], ["menos espejo, más barra.", ""], ["tu yo de la semana pasada levantaba menos.", ""], ["la técnica primero. el ego después.", ""], ["el hierro pesa lo mismo para todos.", ""], ["todos tienen un plan hasta que reciben el primer golpe.", "mike tyson"], ["disciplina es hacerlo aunque nadie mire.", ""], ["empieza ligero. termina con orgullo.", ""], ["la última rep es la que cuenta.", ""], ["si fuera fácil, todos tendrían racha.", ""], ["no rompas la cadena.", ""], ["200 libras siempre son 200 libras.", "henry rollins"], ["el plan funciona si lo haces.", ""], ["suda hoy, presume en el historial.", ""], ["la fuerza se construye un disco a la vez.", ""], ["respira, aprieta, empuja.", ""], ["aparecer ya es la mitad del trabajo.", ""], ["somos lo que hacemos repetidamente.", "will durant"], ["los días malos también se entrenan.", ""], ["los récords no se piden: se cargan.", ""], ["un poco más fuerte que ayer.", ""], ["el cuerpo logra lo que la cabeza aguanta.", ""], ["calentamiento hecho, excusas fuera.", ""], ["al amanecer, cuando te cueste levantarte, piensa: me levanto a hacer mi trabajo.", "marco aurelio"], ["cada kilo en la barra lo pusiste tú.", ""], ["el gimnasio no se va a ir. tú tampoco.", ""], ["sin prisa, sin pausa.", ""], ["hoy tocan reps, no dudas.", ""]];
 const BIG3=[{label:"sentadilla",re:/sentad|squat/i,thr:[1.0,1.25,1.75,2.5]},{label:"press banca",re:/banca|bench/i,thr:[0.75,1.0,1.5,2.0]},{label:"peso muerto",re:/peso *muerto|deadlift/i,thr:[1.0,1.5,2.0,2.75]}];
 const LVL=["principiante","novato","intermedio","avanzado","élite"];
 function bigLift(re){ let e1=0,w=0; DB.exercises.filter(e=>re.test(e.name)).forEach(e=>{ Object.keys(DB.sessions).forEach(k=>{ const ex=DB.sessions[k].exercises.find(x=>x.exId===e.id); if(!ex)return; ex.sets.forEach(s=>{ if(!s.done||s.type==="warm")return; const a=est1rm(s); if(a>e1)e1=a; const ww=num(s.kg); if(ww>w)w=ww; }); }); }); return {e1,w}; }
@@ -746,6 +752,7 @@ const A={
   openShareBig3(){ openShareSheet("big3",big3ShareData()); },
   shareSession(k){ openShareSession(k); },
   openSession(k){ openSessionDetail(k); },
+  nextQuote(){ DB.quoteN=((DB.quoteN||0)+1)%QUOTES.length; save(); const el=document.getElementById("quote"); if(el){ el.outerHTML=quoteHTML(); } },
   chartEx(id){ if(e1Series(id).length<2){ toast("aún no hay datos suficientes"); return; } DB.chartEx=id; save(); render();
     const c=document.getElementById("e1chart"); if(c) c.scrollIntoView({behavior:"smooth",block:"center"}); },
   calMove(d){ _calOff=Math.max(0,_calOff-d); render(); },
@@ -832,6 +839,8 @@ const NAVICON={
 function nav(){ const T=["inicio","entreno","datos","ajustes"];
   return `<div class="nav">${T.map(t=>`<div class="${DB.tab===t?"active":""}" onclick="A.go('${t}')"><svg viewBox="0 0 16 16" aria-hidden="true">${NAVICON[t]}</svg><span>${t}</span></div>`).join("")}</div>`; }
 
+function quoteHTML(){ const q=QUOTES[(DB.quoteN||0)%QUOTES.length];
+  return `<div class="quote" id="quote" onclick="A.nextQuote()">// ${esc(q[0])}${q[1]?` <span class="qa">— ${esc(q[1])}</span>`:""}</div>`; }
 function screenInicio(){
   const wd=new Date().getDay(); const label=DB.labels[wd]||"entreno";
   const plan=DB.routine[wd]||[]; const sess=curSession(); const done=sess&&sess.finished;
@@ -893,6 +902,7 @@ function screenInicio(){
       <div class="eyebrow">${eyebrow}</div>
       <div class="home-h1">hoy:<br>${esc(label)}<span class="dot">.</span></div>
       <div class="home-sub">${plan.length?`${muscles} · ${plan.length} ejercicios · ~${plan.length*9} min`:"// día de descanso — puedes entrenar libre"}</div>
+      ${quoteHTML()}
       <div class="homelink" onclick="A.openWeek()">editar rutina →</div>
     </div><div class="editbtn ${DB.editMode?"on":""}" onclick="A.toggleEdit()">${DB.editMode?"listo ✓":"módulos"}</div></div>
     <div class="home-cta">${foot}</div>
@@ -1544,6 +1554,7 @@ window.lpStart=(e,ei,i)=>{ _lpFired=false; clearTimeout(_lpT); _lpT=setTimeout((
 window.lpEnd=()=>{ clearTimeout(_lpT); };
 window.lpClick=(ei,i)=>{ if(_lpFired){ _lpFired=false; return; } A.cycleType(ei,i); };
 
+DB.quoteN=((DB.quoteN==null?-1:DB.quoteN)+1)%QUOTES.length; save();
 applyTheme();
 render();
 history.replaceState({t:"tab",tab:DB.tab},"");  // raíz del stack, ya con el tab normalizado
