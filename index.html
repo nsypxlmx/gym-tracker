@@ -9,9 +9,10 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="gym.tracker">
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="32x32" href="icon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
-<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 <!-- pantallas de arranque ios (safari las ignora si la media query no calza exacto) -->
 <link rel="apple-touch-startup-image" href="splash/splash-320x568@2x.png" media="(device-width:320px) and (device-height:568px) and (-webkit-device-pixel-ratio:2) and (orientation:portrait)">
 <link rel="apple-touch-startup-image" href="splash/splash-375x667@2x.png" media="(device-width:375px) and (device-height:667px) and (-webkit-device-pixel-ratio:2) and (orientation:portrait)">
@@ -66,7 +67,10 @@ input:focus,select:focus,textarea:focus{outline:none; box-shadow:3px 3px 0 var(-
 .mono-note{font-size:12px; color:var(--muted)}
 
 /* inicio */
-.home-head{padding:32px 24px 0; display:flex; justify-content:space-between; align-items:flex-start}
+.brand{display:flex; align-items:center; gap:10px; padding:20px 24px 0}
+.brand-logo{width:64px; height:40px; image-rendering:pixelated; display:block}
+.brand-name{font-size:15px; font-weight:700; letter-spacing:.14em; color:var(--txt)}
+.home-head{padding:14px 24px 0; display:flex; justify-content:space-between; align-items:flex-start}
 .home-h1{font-size:38px; font-weight:700; line-height:1; text-transform:lowercase; margin-top:10px; letter-spacing:-.02em}
 .home-sub{font-size:13px; color:var(--muted); margin-top:10px}
 /* la rutina se editaba solo desde ajustes, enterrada entre preferencias */
@@ -960,6 +964,7 @@ function screenInicio(){
     : plan.length?`<div class="btn-primary" onclick="A.startWorkout()">${DB.run.active?"continuar entreno":"empezar entreno"} →</div>`
     : `<div class="btn-primary" onclick="A.startWorkout()">entreno libre →</div>`;
   return `<div class="content">
+    <div class="brand"><img class="brand-logo" src="logo.svg" width="64" height="40" alt=""><span class="brand-name">TRACK3R</span></div>
     <div class="home-head"><div>
       <div class="eyebrow">${eyebrow}</div>
       <div class="home-h1">hoy:<br>${esc(label)}<span class="dot">.</span></div>
