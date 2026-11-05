@@ -235,7 +235,7 @@ input:focus,select:focus,textarea:focus{outline:none; box-shadow:3px 3px 0 var(-
 .b3total .t{flex:1; font-size:11px; text-transform:uppercase; letter-spacing:.1em; color:var(--muted)}
 .b3total b{font-size:26px; font-weight:700}
 .club{display:inline-block; font-size:10px; color:var(--cyan); border:1.5px solid var(--dim); padding:2px 5px}
-.clubbadge{margin:16px 20px 4px; background:var(--cyan); color:var(--ink); font-weight:700; font-size:13px; text-transform:uppercase; letter-spacing:.06em; text-align:center; padding:8px; transform:rotate(-1deg); width:70%}
+.clubbadge{margin:4px 20px 12px; background:var(--cyan); color:var(--ink); font-weight:700; font-size:13px; text-transform:uppercase; letter-spacing:.06em; text-align:center; padding:8px; transform:rotate(-1deg); width:70%}
 .mbar{display:flex; align-items:center; gap:10px; padding:6px 20px}
 .mbar .ml{font-size:11px; text-transform:lowercase; color:var(--muted); width:74px; text-align:right}
 .mbar .mt{flex:1; height:14px; background:var(--track); border:1.5px solid var(--dim)}
@@ -260,9 +260,9 @@ input:focus,select:focus,textarea:focus{outline:none; box-shadow:3px 3px 0 var(-
 .stepper{display:flex; align-items:center; gap:10px}
 .stepper .b{cursor:pointer; border:1.5px solid var(--line); padding:4px 10px; font-size:13px}
 .stepper .v{font-size:15px; font-weight:700; color:var(--green)}
-.toggle{width:46px; height:26px; border:1.5px solid var(--line); position:relative; cursor:pointer}
+.toggle{width:46px; height:26px; border:1.5px dashed var(--muted); position:relative; cursor:pointer; flex:0 0 auto}
 .toggle::after{content:""; position:absolute; top:2px; left:2px; width:18px; height:18px; background:var(--muted); transition:.12s}
-.toggle.on{border-color:var(--green)}
+.toggle.on{border:1.5px solid var(--green); background:color-mix(in srgb,var(--green) 18%,transparent)}
 .toggle.on::after{left:24px; background:var(--green)}
 .linkrow{cursor:pointer; display:flex; justify-content:space-between; align-items:center; border:1.5px solid var(--line); padding:14px 16px}
 .linkrow:hover{background:var(--card)}
@@ -325,7 +325,17 @@ input:focus,select:focus,textarea:focus{outline:none; box-shadow:3px 3px 0 var(-
 .ritem .rn{font-size:14px; text-transform:lowercase}
 .ritem .rm{font-size:11px; color:var(--muted)}
 .ritem .rc{display:flex; gap:4px}
-.ritem .rc div{cursor:pointer; border:1.5px solid var(--muted); color:var(--muted); font-size:11px; padding:1px 6px}
+.ritem .rc div{cursor:pointer; border:1.5px solid var(--muted); color:var(--muted); font-size:12px; padding:7px 10px}
+.ritem .rsr{cursor:pointer; color:var(--green); border-bottom:1px dashed var(--green)}
+.wkinfo.tap{cursor:pointer; flex:1}
+.wkgo{color:var(--green); margin-left:6px}
+.ex-name.tap{cursor:pointer}
+.sugtag{font-size:11px; color:var(--green); margin-top:6px}
+.warmlink{font-size:11px; color:var(--amber); margin-top:8px; cursor:pointer; padding:6px 0}
+.hrow{display:flex; justify-content:space-between; align-items:center; gap:10px; padding:9px 0; border-bottom:1.5px solid var(--dim)}
+.hrow .hd{font-size:12px; font-weight:700}
+.hrow .hs{font-size:11px; color:var(--muted); margin-top:2px; overflow-wrap:anywhere}
+.hrow b{color:var(--green); font-size:15px}
 .ritem .rc div.del{border-color:var(--red); color:var(--red)}
 
 /* superseries */
@@ -646,10 +656,19 @@ function set(patch){ const prev=DB.tab; Object.assign(DB, typeof patch==="functi
   if(DB.tab!==prev){ if(!_keepScroll) _scrollY[scrollKey()]=0; pushTab(DB.tab); }
   _keepScroll=false; save(); render(); }
 
-function makeSets(exId,count,reps){ const prev=lastPerf(exId); const out=[]; for(let i=0;i<count;i++){ const p=prev&&prev[i]; out.push({kg:p?p.kg:"", reps:p?p.reps:String(reps||""), done:false, type:"work", rpe:""}); } return out; }
+function makeSets(exId,count,reps){ const prev=lastPerf(exId); const out=[]; for(let i=0;i<count;i++){ const p=prev&&(prev[i]||prev[prev.length-1]); out.push({kg:p?p.kg:"", reps:p?p.reps:String(reps||""), done:false, type:"work", rpe:""}); } return out; }
+// doble progresión: si la última vez cumpliste las reps objetivo en todas las series, toca subir.
+// devuelve las series ya cargadas con +1 escalón y la marca sug; si no, las de siempre
+function planSets(exId,count,reps){ const sets=makeSets(exId,count,reps); const prev=lastPerf(exId); const tgt=parseInt(reps);
+  if(!prev||!tgt) return {sets,sug:0};
+  if(!prev.every(x=>(parseInt(x.reps)||0)>=tgt&&num(x.kg)>0)) return {sets,sug:0};
+  const inc=U()==="kg"?2.5:5/KGLB;
+  sets.forEach((x,i)=>{ const w=num((prev[i]||prev[prev.length-1]).kg); if(w>0){ x.kg=Math.round((w+inc)*100)/100; x.reps=String(tgt); } });
+  return {sets,sug:STEP()}; }
+function planEx(ex,r){ const p=planSets(ex.id,r.sets,r.reps); return {exId:ex.id,name:ex.name,muscle:ex.muscle,note:"",ss:!!r.ss,sets:p.sets,sug:p.sug}; }
 function lastPerf(exId){ const ks=Object.keys(DB.sessions).filter(k=>k<curKey()).sort().reverse(); for(const k of ks){ const ex=DB.sessions[k].exercises.find(e=>e.exId===exId); if(ex){ const d=ex.sets.filter(s=>s.done&&s.type!=="warm"&&(s.kg!==""||s.reps!=="")); if(d.length) return d; } } return null; }
 function startTodaySession(){ const k=curKey(); DB.run.key=k; const wd=new Date().getDay();
-  if(!DB.sessions[k]){ const exs=(DB.routine[wd]||[]).map(r=>{ const ex=exById(r.exId); return ex?{exId:ex.id,name:ex.name,muscle:ex.muscle,note:"",ss:!!r.ss,sets:makeSets(ex.id,r.sets,r.reps)}:null; }).filter(Boolean); DB.sessions[k]={label:DB.labels[wd],exercises:exs,finished:false,note:"",startedAt:null,endedAt:null}; }
+  if(!DB.sessions[k]){ const exs=(DB.routine[wd]||[]).map(r=>{ const ex=exById(r.exId); return ex?planEx(ex,r):null; }).filter(Boolean); DB.sessions[k]={label:DB.labels[wd],exercises:exs,finished:false,note:"",startedAt:null,endedAt:null}; }
   return DB.sessions[k];
 }
 // una rutina editada no debe quedar tapada por la sesión de hoy ya cacheada — pero solo si no hay sets marcados (no se pierde progreso real)
@@ -697,6 +716,7 @@ function plateInfo(p){ const kg={25:["#e23b46","#fff",82],20:["#2f6bff","#fff",8
 function muscleDist(){ const cut=dateKey(new Date(Date.now()-30*864e5)); const vol={}; Object.keys(DB.sessions).forEach(k=>{ if(k<cut)return; DB.sessions[k].exercises.forEach(e=>{ const m=e.muscle||"Otro"; e.sets.forEach(s=>{ if(isWork(s)) vol[m]=(vol[m]||0)+num(s.kg)*(parseInt(s.reps)||0); }); }); }); return Object.entries(vol).filter(x=>x[1]>0).sort((a,b)=>b[1]-a[1]); }
 // serie de 1rm estimado por sesión, con su fecha (para rotular el eje)
 function e1Series(exId){ const out=[]; Object.keys(DB.sessions).sort().forEach(k=>{ const ex=DB.sessions[k].exercises.find(x=>x.exId===exId); if(!ex)return; let m=0; ex.sets.forEach(s=>{ if(isWork(s)){ const e=est1rm(s); if(e>m)m=e; } }); if(m>0)out.push({k,v:m}); }); return out; }
+function kfmt(v){ v=Math.round(v); return v>=10000?(Math.round(v/100)/10)+"k":v.toLocaleString("en-US"); }
 function shortDate(k){ const d=new Date(k+"T12:00:00"); return d.getDate()+" "+MES[d.getMonth()]; }
 // eje bajo una gráfica: fecha inicial, rango de valores y fecha final
 function sparkAxis(first,last,vals){ const mn=Math.min(...vals),mx=Math.max(...vals); const f=v=>Math.round(v*10)/10;
@@ -779,6 +799,11 @@ const A={
   openShareBig3(){ openShareSheet("big3",big3ShareData()); },
   shareSession(k){ openShareSession(k); },
   openSession(k){ openSessionDetail(k); },
+  addWarmup(ei){ const ex=runEx(ei); if(!ex) return; const st=STEP(); const bar=U()==="kg"?DB.settings.barKg:DB.settings.barLb;
+    const w=Math.max(0,...ex.sets.map(x=>parseFloat(dsp(x.kg))||0)); const seen=new Set(); const add=[];
+    [[.4,8],[.6,5],[.8,3]].forEach(([pc,reps])=>{ const v=Math.max(bar,Math.floor(w*pc/st)*st); if(v>=w||seen.has(v)) return; seen.add(v); add.push({kg:toKg(v),reps:String(reps),done:false,type:"warm",rpe:"",ek:true,er:true}); });
+    if(!add.length){ toast("peso muy ligero para calentar"); return; }
+    ex.sets.unshift(...add); vibrate(10); save(); render(); toast(`+${add.length} de calentamiento`,"deshacer",()=>{ ex.sets.splice(0,add.length); save(); render(); }); },
   openExRest(ei){ const ex=runEx(ei); if(!ex) return; const e=exById(ex.exId); if(!e) return; _restEx=e.id;
     openSheet(`<h3>descanso · ${esc(e.name.toLowerCase())}</h3><div class="mono-note" style="margin-bottom:14px">// solo para este ejercicio, en todas tus sesiones. general: ${fmt(DB.settings.restDefault)}</div>
       <div class="stepper" style="justify-content:center;gap:18px"><div class="b big" onclick="A.exRest(-15)">−15s</div><div class="v" id="exrestv" style="font-size:28px">${fmt(restFor(e.id))}</div><div class="b big" onclick="A.exRest(15)">+15s</div></div>
@@ -987,6 +1012,11 @@ function screenEntreno(){
     <div class="wk-foot"><div class="wk-next">${esc(nextLabel)}</div><div class="actbtn wkbtn" style="--acc:${more?"var(--cyan)":"var(--green)"}" onclick="A.nextEx()">${nextCta}</div></div>
   </div>`;
 }
+// atajo de calentamiento: solo antes de empezar el ejercicio y si el peso de trabajo lo justifica
+function warmHTML(ex,ei){ if(ex.sets.some(x=>x.done||(x.type||"work")==="warm")) return "";
+  const w=Math.max(0,...ex.sets.map(x=>parseFloat(dsp(x.kg))||0)); const bar=U()==="kg"?DB.settings.barKg:DB.settings.barLb;
+  if(w<bar*2) return "";
+  return `<div class="warmlink" onclick="A.addWarmup(${ei})">// + series de calentamiento (40 · 60 · 80%)</div>`; }
 // bloque de un ejercicio dentro de la pantalla de entreno
 function exBlockHTML(s,ei,isSS,round,lastOfGroup){
   const ex=s.exercises[ei];
@@ -997,13 +1027,15 @@ function exBlockHTML(s,ei,isSS,round,lastOfGroup){
   const firstPending=isSS?round:ex.sets.findIndex(x=>!x.done);
   const rows=ex.sets.map((x,i)=>{
     const cur=i===firstPending; const t=x.type||"work";
-    let lbl=String(i+1), col=(x.done||cur)?"var(--txt)":"var(--muted)"; if(t==="warm"){lbl="C";col="var(--amber)";} else if(t==="drop"){lbl="D";col="var(--cyan)";}
+    // el calentamiento no ocupa número: las series de trabajo se cuentan aparte
+    const wi=ex.sets.slice(0,i).filter(y=>(y.type||"work")!=="warm").length;
+    let lbl=String(wi+1), col=(x.done||cur)?"var(--txt)":"var(--muted)"; if(t==="warm"){lbl="C";col="var(--amber)";} else if(t==="drop"){lbl="D";col="var(--cyan)";}
     const ib=x.done?"var(--dim)":(cur?"var(--green)":"var(--dim)"); const ic=x.done?"var(--muted)":"var(--txt)";
     const rpeCell=rpe?`<input class="set-in" style="border-color:${ib};color:var(--amber)" value="${esc(x.rpe)}" onchange="A.setRpe(${ei},${i},this.value)" inputmode="decimal" placeholder="rpe">`:"";
     const check=x.done?`<div class="set-donemark" onclick="A.uncheckSet(${ei},${i})" title="desmarcar">✓</div>`:`<div class="set-check" onclick="A.checkSet(${ei},${i})">✓</div>`;
     // la serie activa lleva atajos ± y la referencia de esa misma serie la vez pasada
-    const pv=prev&&prev[i]; const st=STEP();
-    const extra=(cur&&!x.done)?`<div class="bumprow" style="grid-template-columns:${cols}"><div></div><div class="bump"><span onclick="A.bump(${ei},${i},'kg',-${st})">−${st}</span><span onclick="A.bump(${ei},${i},'kg',${st})">+${st}</span></div><div class="bump"><span onclick="A.bump(${ei},${i},'reps',-1)">−1</span><span onclick="A.bump(${ei},${i},'reps',1)">+1</span></div>${rpe?"<div></div>":""}<div></div></div>${pv?`<div class="rowlast">// serie ${i+1} la última vez: ${dsp(pv.kg)||0} × ${esc(pv.reps)}</div>`:""}`:"";
+    const pv=t!=="warm"&&prev&&prev[wi]; const st=STEP();
+    const extra=(cur&&!x.done)?`<div class="bumprow" style="grid-template-columns:${cols}"><div></div><div class="bump"><span onclick="A.bump(${ei},${i},'kg',-${st})">−${st}</span><span onclick="A.bump(${ei},${i},'kg',${st})">+${st}</span></div><div class="bump"><span onclick="A.bump(${ei},${i},'reps',-1)">−1</span><span onclick="A.bump(${ei},${i},'reps',1)">+1</span></div>${rpe?"<div></div>":""}<div></div></div>${pv?`<div class="rowlast">// serie ${wi+1} la última vez: ${dsp(pv.kg)||0} × ${esc(pv.reps)}</div>`:""}`:"";
     return `<div class="set-row${(ei+":"+i)===_newSet?" rowin":""}" style="grid-template-columns:${cols}">
       <div class="set-n" style="color:${col};font-weight:${cur?700:400}" onpointerdown="lpStart(event,${ei},${i})" onpointerup="lpEnd()" onpointerleave="lpEnd()" onpointercancel="lpEnd()" oncontextmenu="return false" onclick="lpClick(${ei},${i})">${lbl}</div>
       <input class="set-in" style="border-color:${ib};color:${ic}" value="${esc(dsp(x.kg))}" onchange="A.setKg(${ei},${i},this.value)" inputmode="decimal">
@@ -1013,8 +1045,10 @@ function exBlockHTML(s,ei,isSS,round,lastOfGroup){
   }).join("");
   const pos=isSS?esc((ex.muscle||"").toLowerCase()):`${ei+1}/${s.exercises.length}`;
   return `<div class="ex-block${isSS?" ss":""}">
-      <div class="ex-top"><div class="ex-name">${esc(ex.name)} <small>${pos}</small></div><div class="ex-tools"><div class="tool${exById(ex.exId)&&exById(ex.exId).rest?" on":""}" onclick="A.openExRest(${ei})" title="descanso de este ejercicio">${fmt(restFor(ex.exId))}</div><div class="tool" onclick="A.openExNote(${ei})">nota</div><div class="tool" onclick="A.plateFromEx(${ei})">discos</div></div></div>
+      <div class="ex-top"><div class="ex-name tap" onclick="openExHistory('${ex.exId}')">${esc(ex.name)} <small>${pos}</small></div><div class="ex-tools"><div class="tool${exById(ex.exId)&&exById(ex.exId).rest?" on":""}" onclick="A.openExRest(${ei})" title="descanso de este ejercicio">${fmt(restFor(ex.exId))}</div><div class="tool" onclick="A.openExNote(${ei})">nota</div><div class="tool" onclick="A.plateFromEx(${ei})">discos</div></div></div>
       <div class="ex-last">últ: ${esc(last)}</div>
+      ${ex.sug&&!ex.sets.some(x=>x.done)?`<div class="sugtag">↑ cumpliste todas las reps: +${ex.sug} ${U()} sugerido</div>`:""}
+      ${warmHTML(ex,ei)}
       ${exNoteHTML(ex)}
       <div class="set-head" style="grid-template-columns:${cols}"><div>set</div><div>${U()}</div><div>reps</div>${rpe?"<div>rpe</div>":""}<div></div></div>
       ${rows}
@@ -1061,11 +1095,11 @@ function bodyProgreso(){
   const prList=DB.exercises.map(e=>{ let best=0,info=null; Object.keys(DB.sessions).forEach(k=>{ const ex=DB.sessions[k].exercises.find(x=>x.exId===e.id); if(!ex)return; ex.sets.forEach(s=>{ if(isWork(s)){ const v=est1rm(s); if(v>best){best=v;info={kg:s.kg,reps:s.reps,date:k};} } }); }); return info?{id:e.id,name:e.name,val:`${conv(num(info.kg))} ${U()} × ${info.reps}`,date:MES[new Date(info.date+"T12:00:00").getMonth()],e1:best}:null; }).filter(Boolean).sort((a,b)=>b.e1-a.e1).slice(0,5);
   const md=muscleDist(); const mmax=md.length?md[0][1]:1;
   const bwArr=DB.bodyweight.slice().sort((a,b)=>a.date<b.date?-1:1);
-  return `${maxClub>=1?`<div class="clubbadge">■ ${maxClub} plate club</div>`:""}
-    <div class="section-lbl">big 3 · fuerza</div>
+  return `<div class="section-lbl">big 3 · fuerza</div>
     ${b3rows}
     <div class="b3total"><span class="t">total 1rm est.</span><b>${conv(total)} ${U()}</b>${tlvl!=null?`<span class="b3lvl" style="color:var(--green);border-color:var(--green)">${LVL[tlvl]}</span>`:""}</div>
-    ${chartEx&&pts.length>1?`<div class="prog-block" id="e1chart"><div class="prog-row"><div class="prog-name">${esc(chartEx.name)} — 1rm est.</div><div class="tool" onclick="openChartPick()">cambiar</div></div><div class="prog-val">${oneRm} ${U()} <small>${gain>=0?"+":""}${gain} ${U()} desde ${shortDate(ser[0].k)}</small></div>${sparkSVG(pts.map(conv),"#00ff88")}${sparkAxis(ser[0].k,ser[ser.length-1].k,pts.map(conv))}<div class="mono-note" style="margin-top:8px;font-size:10px">// toca un básico o un récord para verlo aquí</div></div>`:""}
+    ${maxClub>=1?`<div class="clubbadge">■ ${maxClub} plate club</div>`:""}
+    ${chartEx&&pts.length>1?`<div class="prog-block" id="e1chart"><div class="prog-row"><div class="prog-name">${esc(chartEx.name)} — 1rm est.</div><div class="ex-tools"><div class="tool" onclick="openExHistory('${chartEx.id}')">sesiones</div><div class="tool" onclick="openChartPick()">cambiar</div></div></div><div class="prog-val">${oneRm} ${U()} <small>${gain>=0?"+":""}${gain} ${U()} desde ${shortDate(ser[0].k)}</small></div>${sparkSVG(pts.map(conv),"#00ff88")}${sparkAxis(ser[0].k,ser[ser.length-1].k,pts.map(conv))}<div class="mono-note" style="margin-top:8px;font-size:10px">// toca un básico o un récord para verlo aquí</div></div>`:""}
     <div class="section-lbl">sesiones</div>
     <div class="prs-item"><span class="name">entrenos totales</span><span class="val">${finishedDates().length}</span></div>
     <div class="prs-item"><span class="name">este mes</span><span class="val">${monthSessions()}</span></div>
@@ -1075,7 +1109,7 @@ function bodyProgreso(){
     <div class="section-lbl">peso corporal</div>
     <div class="prog-block">${bwArr.length?`<div class="prog-val" style="font-size:22px">${conv(bwArr[bwArr.length-1].weight)} ${U()} ${bwArr.length>1?`<small>${(bwArr[bwArr.length-1].weight-bwArr[0].weight>=0?"+":"")+(Math.round((conv(bwArr[bwArr.length-1].weight)-conv(bwArr[0].weight))*10)/10)} ${U()} desde ${shortDate(bwArr[0].date)}</small>`:""}</div>${sparkSVG(bwArr.map(x=>conv(x.weight)),"#00d4ff")}${bwArr.length>1?sparkAxis(bwArr[0].date,bwArr[bwArr.length-1].date,bwArr.map(x=>conv(x.weight))):""}`:`<div class="mono-note">// sin registros</div>`}<div class="mbtn green" style="margin-top:12px" onclick="A.openBodyweight()">+ registrar peso</div></div>
     <div class="section-lbl">volumen por músculo · 30d</div>
-    ${md.map(m=>`<div class="mbar"><div class="ml">${m[0].toLowerCase()}</div><div class="mt"><div class="mf" style="width:${Math.max(4,m[1]/mmax*100)}%"></div></div><div class="mv">${Math.round(conv(m[1]))}</div></div>`).join("")||`<div class="mono-note" style="padding:6px 20px">// sin volumen en 30 días</div>`}
+    ${md.map(m=>`<div class="mbar"><div class="ml">${m[0].toLowerCase()}</div><div class="mt"><div class="mf" style="width:${Math.max(4,m[1]/mmax*100)}%"></div></div><div class="mv">${kfmt(conv(m[1]))}</div></div>`).join("")||`<div class="mono-note" style="padding:6px 20px">// sin volumen en 30 días</div>`}
     <div style="padding:16px 20px"><div class="mbtn green" onclick="A.openShareBig3()">↗ compartir big 3</div></div>`;
 }
 
@@ -1176,6 +1210,16 @@ function openSummary(k){ const s=DB.sessions[k]; if(!s) return;
     ${cmp?`<div class="impsum"><span>contra la última ${esc(s.label)}</span><b>${cmp}</b></div>`:""}
     ${prs.length?`<div class="section-lbl" style="padding:14px 0 4px">récords de hoy</div>${prHTML}`:""}
     <div class="btnrow" style="margin-top:16px"><div class="mbtn" onclick="closeSheet();openShareSession('${k}')">↗ compartir</div><div class="mbtn green" onclick="closeSheet()">listo</div></div>`); }
+function openExHistory(exId){ const e=exById(exId); if(!e) return;
+  const ks=Object.keys(DB.sessions).filter(k=>DB.sessions[k].exercises.some(x=>x.exId===exId&&x.sets.some(isWork))).sort().reverse();
+  const ser=e1Series(exId); const vals=ser.map(x=>conv(x.v));
+  const rows=ks.map(k=>{ const x=DB.sessions[k].exercises.find(y=>y.exId===exId); const ws=x.sets.filter(isWork); let b=0; ws.forEach(t=>{ const v=est1rm(t); if(v>b)b=v; });
+    return `<div class="hrow"><div><div class="hd">${shortDate(k)}${k===curKey()&&!DB.sessions[k].finished?" · hoy":""}</div><div class="hs">${ws.map(t=>`${dsp(t.kg)||0}×${esc(t.reps)}`).join("  ")}</div></div><b>${b?Math.round(conv(b)):"—"}</b></div>`; }).join("");
+  openSheet(`<h3>${esc(e.name.toLowerCase())}</h3><div class="mono-note" style="margin-bottom:10px">// ${ks.length} sesion${ks.length===1?"":"es"} · 1rm est. por sesión a la derecha</div>
+    ${vals.length>1?sparkSVG(vals,"#00ff88")+sparkAxis(ser[0].k,ser[ser.length-1].k,vals):""}
+    <div class="list" style="max-height:44vh;margin-top:10px">${rows||`<div class="mono-note">// sin series registradas aún</div>`}</div>
+    <div class="btnrow" style="margin-top:12px">${vals.length>1?`<div class="mbtn" onclick="closeSheet();A.chartEx('${exId}');A.goData('progreso')">ver en progreso</div>`:""}<div class="mbtn green" onclick="closeSheet()">listo</div></div>`); }
+window.openExHistory=openExHistory;
 function openChartPick(){
   const rows=DB.exercises.map(e=>({e,n:e1Series(e.id).length})).filter(x=>x.n>=2).sort((a,b)=>b.n-a.n)
     .map(x=>`<div class="opt" onclick="closeSheet();A.chartEx('${x.e.id}')"><span><span class="pname">${esc(x.e.name.toLowerCase())}</span><small class="pnote">${x.n} sesiones</small></span><span class="m">${x.e.id===DB.chartEx?"✓":"→"}</span></div>`).join("");
@@ -1243,17 +1287,29 @@ function openRoutine(){
   const chips=[1,2,3,4,5,6,0].map(i=>`<div class="daychip ${i===d?"on":""}" onclick="_routineDay=${i};openRoutine()">${DOW[i]}·${esc(DB.labels[i]||"")}</div>`).join("");
   const list=items.map((r,i)=>{ const ex=exById(r.exId); if(!ex) return "";
     const linked=i>0&&items[i-1].ss;
-    const row=`<div class="ritem${linked?" ssin":""}"><div><div class="rn">${esc(ex.name)}</div><div class="rm">${r.sets} × ${r.reps} · ${ex.muscle.toLowerCase()}</div></div><div class="rc"><div onclick="moveRoutine(${i},-1)">↑</div><div onclick="moveRoutine(${i},1)">↓</div><div class="del" onclick="delRoutine(${i})">×</div></div></div>`;
+    const row=`<div class="ritem${linked?" ssin":""}"><div><div class="rn">${esc(ex.name)}</div><div class="rm"><span class="rsr" onclick="openSR(${i})">${r.sets} × ${esc(r.reps)} ✎</span> · ${ex.muscle.toLowerCase()}</div></div><div class="rc"><div onclick="moveRoutine(${i},-1)">↑</div><div onclick="moveRoutine(${i},1)">↓</div><div class="del" onclick="delRoutine(${i})">×</div></div></div>`;
     const link=i<items.length-1?`<div class="sslink${r.ss?" on":""}" onclick="toggleSS(${i})">${r.ss?"⌐ en superserie con el siguiente · separar":"+ unir en superserie"}</div>`:"";
     return row+link; }).join("")||`<div class="mono-note" style="padding:10px 0">// día de descanso — elige otro día arriba, agrega ejercicios o aplica una plantilla</div>`;
   openSheet(`<h3>rutina semanal</h3><div class="daychips">${chips}</div><div class="field"><label>etiqueta del día</label><input value="${esc(DB.labels[d]||"")}" onchange="DB.labels[${d}]=this.value.trim();save()"></div>${list}<div class="btnrow" style="margin-top:14px"><div class="mbtn green" onclick="openAddExercise(${d})">+ ejercicio</div><div class="mbtn" onclick="openPresets()">plantillas</div></div><div class="btnrow" style="margin-top:10px"><div class="mbtn" onclick="openWeek()">← semana</div><div class="mbtn" onclick="openMoveDay()">intercambiar día</div></div>`);
 }
 window.openRoutine=openRoutine;
+// series × reps de un ejercicio de la rutina. reps es texto: admite rangos tipo "8-12"
+function openSR(i){ const r=(DB.routine[_routineDay]||[])[i]; if(!r) return; const ex=exById(r.exId);
+  openSheet(`<h3>${esc((ex?ex.name:"").toLowerCase())}</h3><div class="mono-note" style="margin-bottom:14px">// ${DOW[_routineDay]} · ${esc(DB.labels[_routineDay]||"")}</div>
+    <div class="prow"><div class="plabel">series</div><div class="stepper"><div class="b big" onclick="srStep(${i},-1)">−</div><div class="v" id="srv" style="font-size:22px;min-width:28px;text-align:center">${r.sets}</div><div class="b big" onclick="srStep(${i},1)">+</div></div></div>
+    <div class="field" style="margin-top:12px"><label>reps (número o rango, ej. 8-12)</label><input id="srreps" value="${esc(r.reps)}" inputmode="text"></div>
+    <div class="mono-note" style="font-size:10px;margin-top:6px">// con rango, la sugerencia de subir peso usa el número más bajo</div>
+    <div class="btnrow" style="margin-top:14px"><div class="mbtn" onclick="openRoutine()">← volver</div><div class="mbtn green" onclick="srSave(${i})">guardar</div></div>`); }
+window.openSR=openSR;
+window.srStep=(i,d)=>{ const r=DB.routine[_routineDay][i]; r.sets=Math.max(1,Math.min(12,(parseInt(r.sets)||3)+d)); save(); const v=document.getElementById("srv"); if(v) v.textContent=r.sets; };
+window.srSave=i=>{ const r=DB.routine[_routineDay][i]; const v=(document.getElementById("srreps").value||"").trim().replace(/\s+/g,"");
+  if(!/^\d{1,3}(-\d{1,3})?$/.test(v)){ toast("reps: un número o un rango como 8-12"); return; }
+  r.reps=v; refreshTodaySessionIfFresh(); save(); openRoutine(); toast("guardado"); };
 function openWeek(){
   const rows=[1,2,3,4,5,6,0].map(i=>{ const n=(DB.routine[i]||[]).length; const st=(DB.stash||{})[i];
     const sub=n?`${n} ejercicio${n===1?"":"s"}`:(st&&st.items.length?`${st.items.length} guardados`:"sin ejercicios");
-    return `<div class="wkrow${n?"":" rest"}"><div class="wkinfo" onclick="editDay(${i})"><div class="wkday">${DOW[i]} · ${esc(DB.labels[i]||"")}</div><div class="wksub">${sub}</div></div><div class="toggle ${n?"on":""}" onclick="toggleRest(${i})"></div></div>`; }).join("");
-  openSheet(`<h3>tu semana</h3><div class="mono-note" style="margin-bottom:12px">// toca un día para editarlo · el switch lo pasa a descanso</div>${rows}<div class="btnrow" style="margin-top:16px"><div class="mbtn" onclick="openPresets()">plantillas</div><div class="mbtn green" onclick="closeSheet()">listo</div></div>`);
+    return `<div class="wkrow${n?"":" rest"}"><div class="wkinfo tap" onclick="editDay(${i})"><div class="wkday">${DOW[i]} · ${esc(DB.labels[i]||"")}</div><div class="wksub">${sub} <span class="wkgo">editar →</span></div></div><div class="toggle ${n?"on":""}" onclick="toggleRest(${i})" title="${n?"pasar a descanso":"activar día"}"></div></div>`; }).join("");
+  openSheet(`<h3>tu semana</h3><div class="mono-note" style="margin-bottom:12px">// toca un día para editarlo · el switch activa o pasa a descanso</div>${rows}<div class="btnrow" style="margin-top:16px"><div class="mbtn" onclick="openPresets()">plantillas</div><div class="mbtn green" onclick="closeSheet()">listo</div></div>`);
 }
 window.openWeek=openWeek;
 window.editDay=i=>{ _routineDay=i; openRoutine(); };
@@ -1307,7 +1363,7 @@ window.loadRoutineDay=wd=>{
   const s=startTodaySession(); const wasEmpty=s.exercises.length===0;
   const have=new Set(s.exercises.map(e=>e.exId)); let added=0;
   (DB.routine[wd]||[]).forEach(r=>{ const ex=exById(r.exId); if(!ex||have.has(ex.id)) return;
-    s.exercises.push({exId:ex.id,name:ex.name,muscle:ex.muscle,note:"",ss:!!r.ss,sets:makeSets(ex.id,r.sets,r.reps)}); have.add(ex.id); added++; });
+    s.exercises.push(planEx(ex,r)); have.add(ex.id); added++; });
   if(wasEmpty&&added) s.label=DB.labels[wd]||s.label;
   DB.run.active=true; if(wasEmpty) DB.run.exIdx=0;
   save(); closeSheet(); set({tab:"entreno"});
