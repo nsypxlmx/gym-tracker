@@ -1,4 +1,4 @@
-const CACHE="gymtracker-mono-v10";
+const CACHE="gymtracker-mono-v11";
 // las 18 pantallas de arranque de ios no se precachean: cada equipo pide solo la suya,
 // y el fetch handler (cache-first para estáticos) la guarda en el primer arranque online
 const ASSETS=["./","./index.html","./manifest.json","./icon-192.png","./icon-512.png","./apple-touch-icon.png","./favicon-32.png","./favicon-16.png","./logo.svg","./pdfjs/pdf.min.mjs","./pdfjs/pdf.worker.min.mjs"];
