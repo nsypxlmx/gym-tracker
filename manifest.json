@@ -1,6 +1,6 @@
 {
-  "name": "gym.tracker",
-  "short_name": "gym.tracker",
+  "name": "TRCK3R",
+  "short_name": "TRCK3R",
   "description": "Tracker de gym minimalista — series, descanso, PRs y progreso.",
   "start_url": "./index.html",
   "scope": "./",
