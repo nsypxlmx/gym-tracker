@@ -260,6 +260,37 @@ input:focus,select:focus,textarea:focus{outline:none; box-shadow:3px 3px 0 var(-
 .dseg div{flex:1; cursor:pointer; text-align:center; padding:10px 4px; font-size:12px; letter-spacing:.06em; text-transform:lowercase; color:var(--muted); border:1.5px solid var(--line)}
 .dseg div+div{border-left:none}
 .dseg div.on{color:var(--ink); background:var(--accent); border-color:var(--accent)}
+.lgdot{display:inline-block; width:6px; height:6px; margin-left:5px; vertical-align:middle; background:var(--accent)}
+.dseg div.on .lgdot{background:var(--ink)}
+.lghead{padding:4px 20px 12px}
+.lghead .lgtop{font-size:15px; letter-spacing:.04em}
+.lghead .lgtop b{color:var(--accent); font-weight:700}
+.lgbar{height:5px; background:var(--track); border:1px solid var(--line-soft); margin-top:6px}
+.lgbar i{display:block; height:100%; background:var(--accent)}
+.lglast{margin-top:8px; font-size:11px; color:var(--muted)}
+.lgchips{display:flex; flex:none; gap:6px; overflow-x:auto; padding:0 20px 12px; scrollbar-width:none}
+.lgchips .chip{flex:none; white-space:nowrap}
+.lgchips .chip.on{border-style:solid; border-color:var(--accent); color:var(--accent)}
+.lgsec{padding:0 20px 14px}
+.lgsec h3{margin:6px 0 8px; font-size:12px; letter-spacing:.08em; font-weight:400; color:var(--muted); text-transform:lowercase}
+.lggrid{display:grid; grid-template-columns:repeat(3,1fr); gap:8px}
+.lgtile{position:relative; cursor:pointer; background:var(--card); border:1.5px solid var(--line-soft); padding:22px 6px 8px; text-align:center; min-width:0}
+.lgtile .lgpts{position:absolute; top:5px; left:6px; font-size:10px; color:var(--muted)}
+.lgtile .lggem{position:absolute; top:5px; right:6px; width:12px; height:12px; image-rendering:pixelated}
+.lgtile.lk .lgpts,.lgtile.lk .lggem{opacity:.45}
+.lgem{display:block; margin:0 auto 6px; width:48px; height:48px; image-rendering:pixelated}
+.lgtile .lgt{font-size:12px; font-weight:700; line-height:1.15; overflow-wrap:anywhere}
+.lgtile .lgr{margin-top:3px; font-size:10px; line-height:1.2; color:var(--muted); overflow-wrap:anywhere}
+.lgtile .lgs{margin-top:5px; font-size:10px; color:var(--muted)}
+.lgtile.lk .lgt{color:var(--muted)}
+.lgtile .lgnew{display:inline-block; width:6px; height:6px; margin-left:5px; vertical-align:middle; background:var(--accent)}
+.lgtile.miss{opacity:.6}
+.lgsheet{text-align:center}
+.lgsheet .lgem{width:96px; height:96px; margin:4px auto 12px}
+.lgsheet h2{margin:0 0 4px; font-size:18px}
+.lgsheet .lgr{color:var(--muted); font-size:13px}
+.lgsheet .lgg{margin:12px 0 4px; font-size:13px}
+.lgsheet .lgs{margin-top:6px; font-size:13px; color:var(--muted)}
 .stepper{display:flex; align-items:center; gap:10px}
 .stepper .b{cursor:pointer; border:1.5px solid var(--line); padding:4px 10px; font-size:13px}
 .stepper .v{font-size:15px; font-weight:700; color:var(--accent)}
@@ -385,6 +416,20 @@ input:focus,select:focus,textarea:focus{outline:none; box-shadow:3px 3px 0 var(-
 
 .toast{position:fixed; bottom:calc(80px + var(--runbar-h,0px)); left:50%; transform:translateX(-50%); background:var(--accent); color:var(--ink); padding:11px 16px; font-size:13px; font-weight:700; text-transform:lowercase; z-index:70; opacity:0; transition:.2s; pointer-events:none; display:flex; gap:12px; align-items:center; max-width:90%}
 .toast.show{opacity:1; pointer-events:auto}
+#achToast{position:fixed; top:calc(10px + env(safe-area-inset-top,0px)); left:50%; width:min(358px,calc(100% - 24px)); transform:translate(-50%,-150%); visibility:hidden; z-index:80; display:flex; align-items:center; gap:12px; padding:10px 12px; background:var(--card); color:var(--txt); border:1.5px solid var(--line); box-shadow:4px 4px 0 var(--accent); cursor:pointer; transition:transform .25s ease, visibility 0s linear .25s}
+#achToast.show{transform:translate(-50%,0); visibility:visible; transition:transform .25s ease, visibility 0s}
+#achToast img.ae{width:32px; height:32px; flex:0 0 auto; image-rendering:pixelated}
+#achToast .am{flex:1; min-width:0}
+#achToast .ak{font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--accent); font-weight:700}
+#achToast .at{font-size:14px; font-weight:700; overflow-wrap:anywhere}
+#achToast .ap{display:flex; align-items:center; gap:5px; flex:0 0 auto; font-size:12px; font-weight:700}
+#achToast .ap img{width:12px; height:12px; image-rendering:pixelated}
+#achToast.more .at{font-size:13px}
+@media (prefers-reduced-motion: reduce){#achToast{transform:translate(-50%,0); opacity:0; transition:opacity .2s ease, visibility 0s linear .2s}#achToast.show{opacity:1; transition:opacity .2s ease, visibility 0s}}
+.sumlg{display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid var(--line-soft); cursor:pointer}
+.sumlg img.ae{width:32px; height:32px; flex:0 0 auto; image-rendering:pixelated}
+.sumlg .am{flex:1; min-width:0; font-weight:700; font-size:13px; overflow-wrap:anywhere}
+.sumlg .ap{flex:0 0 auto; font-size:12px; color:var(--muted)}
 .toast button{background:none; border:none; border-left:1.5px solid rgba(10,10,10,.4); color:var(--ink); font-family:inherit; font-weight:700; text-transform:lowercase; padding-left:12px; cursor:pointer}
 /* pantalla de arranque in-app: cubre el hueco entre el splash del sistema y el primer render.
    siempre oscura, a juego con background_color del manifest y las imágenes de ios */
@@ -418,6 +463,7 @@ input:focus,select:focus,textarea:focus{outline:none; box-shadow:3px 3px 0 var(-
 </div>
 <div class="overlay" id="overlay"><div class="sheet" id="sheet"></div></div>
 <div class="toast" id="toast"></div>
+<div id="achToast" role="status" aria-live="polite" onclick="achDismiss()"></div>
 <script>
 "use strict";
 /* ==================== DATOS ==================== */
@@ -539,14 +585,23 @@ const MODS={
 };
 function baseDefault(){
   return {tab:"inicio", editMode:false, exercises:[], routine:{0:[],1:[],2:[],3:[],4:[],5:[],6:[]}, labels:{0:"descanso",1:"empuje",2:"jalón",3:"pierna",4:"empuje",5:"jalón",6:"pierna"},
-    sessions:{}, bodyweight:[], stash:{}, customPresets:{},
-    settings:{unit:"kg", theme:"dark", themeV2:true, restDefault:90, restNotif:false, showRpe:false, sound:true, lastExport:"", barKg:20, barLb:45, modOrder:["racha","volumen","pr","big3","peso"], hidden:["descanso","musculo","sesiones","proximo"], seeded:false, onboarded:false, demo:false, demoUntil:"", unitKg:true, keepAwake:true},
+    sessions:{}, bodyweight:[], stash:{}, customPresets:{}, logros:{},
+    settings:{unit:"kg", theme:"dark", themeV2:true, restDefault:90, restNotif:false, showRpe:false, sound:true, lastExport:"", barKg:20, barLb:45, modOrder:["racha","volumen","pr","big3","peso"], hidden:["descanso","musculo","sesiones","proximo"], seeded:false, onboarded:false, demo:false, demoUntil:"", unitKg:true, keepAwake:true, logrosInit:false, logrosSeenAt:{}},
     run:{active:false, exIdx:0, rest:0, resting:false, key:"", restEnd:0}};
 }
 let DB;
 DB=load();
 function load(){ try{ const r=localStorage.getItem(KEY); if(!r) return seedAll(baseDefault()); const d=JSON.parse(r); const o=Object.assign(baseDefault(),d); o.settings=Object.assign(baseDefault().settings,d.settings||{}); o.run=Object.assign(baseDefault().run,d.run||{}); return migrate(o,d); }catch(e){ return seedAll(baseDefault()); } }
 function migrate(o,d){ const s=o.settings;
+  // historial malformado (backups editados a mano): exercises y sets siempre son arrays de objetos
+  if(!isObj(o.sessions)) o.sessions={};
+  Object.values(o.sessions).forEach(x=>{ if(!isObj(x)) return;
+    const arr=v=>Array.isArray(v)?v:isObj(v)?Object.values(v):[];
+    x.exercises=arr(x.exercises).filter(isObj);
+    x.exercises.forEach(e=>{ e.sets=arr(e.sets).filter(isObj); }); });
+  // logros (§7): un valor corrupto se trata como vacío y el replay silencioso lo reconstruye
+  if(!isObj(o.logros)) o.logros={};
+  if(!isObj(s.logrosSeenAt)) s.logrosSeenAt={};
   // instalaciones previas al onboarding: ya conocen la app, no mostrar bienvenida
   if(d.settings&&d.settings.onboarded===undefined){ s.onboarded=true; s.demo=false; s.demoUntil=""; }
   // antes se guardaba el número tal cual se escribía; ahora el almacén es siempre kg.
@@ -564,6 +619,9 @@ function toCanonicalKg(o){
 }
 function migrateMods(o){ const s=o.settings; s.modOrder=s.modOrder.filter(id=>MODS[id]); s.hidden=s.hidden.filter(id=>MODS[id]); Object.keys(MODS).forEach(id=>{ if(!s.modOrder.includes(id)&&!s.hidden.includes(id)) s.hidden.push(id); }); return o; }
 function save(){ try{ localStorage.setItem(KEY,JSON.stringify(DB)); }catch(e){} }
+// objeto plano (no null ni array) y propiedad propia: para leer datos importados o editados a mano
+function isObj(v){ return !!v&&typeof v==="object"&&!Array.isArray(v); }
+function hasOwn(o,k){ return Object.prototype.hasOwnProperty.call(o,k); }
 function uid(){ return "x"+Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
 function exByName(n){ return DB.exercises.find(e=>e.name===n); }
 function ensureEx(name,muscle){ let e=exByName(name); if(!e){ e={id:uid(),name,muscle:muscle||"Otro"}; DB.exercises.push(e); } return e; }
@@ -643,7 +701,8 @@ let _ignorePop=0;      // entradas que retiramos nosotros al cerrar una capa
 let _sheetOpen=false, _prOpen=false;
 function pushTab(t){ history.pushState({t:"tab",tab:t},""); }
 // datos guarda un scroll por segmento: son dos pantallas compartiendo tab
-function scrollKey(){ return DB.tab==="datos" ? "datos:"+(DB.dataTab==="progreso"?"progreso":"historial") : DB.tab; }
+function dataSub(){ return DB.dataTab==='progreso'||DB.dataTab==='logros'?DB.dataTab:'historial'; }
+function scrollKey(){ return DB.tab==="datos" ? "datos:"+dataSub() : DB.tab; }
 function pushLayer(){ history.pushState({t:"layer"},""); }
 function dropLayer(){ if(history.state&&history.state.t==="layer"){ _ignorePop++; history.back(); } }
 window.addEventListener("popstate",e=>{
@@ -718,6 +777,320 @@ function muscleDist(){ const cut=dateKey(new Date(Date.now()-30*864e5)); const v
 // serie de 1rm estimado por sesión, con su fecha (para rotular el eje)
 function e1Series(exId){ const out=[]; Object.keys(DB.sessions).sort().forEach(k=>{ const ex=DB.sessions[k].exercises.find(x=>x.exId===exId); if(!ex)return; let m=0; ex.sets.forEach(s=>{ if(isWork(s)){ const e=est1rm(s); if(e>m)m=e; } }); if(m>0)out.push({k,v:m}); }); return out; }
 function kfmt(v){ v=Math.round(v); return v>=10000?(Math.round(v/100)/10)+"k":v.toLocaleString("en-US"); }
+/* ==================== LOGROS ==================== */
+// insignias calculadas reproduciendo el historial (spec 2026-11-06-logros). solo se guarda {id → fecha}.
+const GRADE={B:{pts:10,name:"bronce",pal:"bronze"}, P:{pts:25,name:"plata",pal:"silver"}, O:{pts:50,name:"oro",pal:"gold"}, X:{pts:200,name:"platino",pal:"plat"}};
+const FAM={constancia:{shape:"flame",pal:"red"}, fuerza:{shape:"plate",pal:"steel"}, records:{shape:"star",pal:"green"}, volumen:{shape:"gem",pal:"violet"}, habitos:{shape:"oct",pal:"teal"}, secretos:{shape:"moon",pal:"night"}, platino:{shape:"trophy",pal:"plat"}, temporadas:{shape:"snow",pal:"ice"}};
+// matcher estricto (§3.2): las variantes con mancuerna/goblet/kettlebell/rumano no cuentan como barra
+const LIFT_NOBAR=/mancuerna|goblet|kettlebell|pesa rusa|rumano/i;
+const LIFT_DB=[["dbp",/press (pecho|inclinado) mancuerna/i],["gob",/sentadilla goblet/i],["row",/^remo mancuerna/i]];
+const LIFT_BAR=[["sq",BIG3[0].re],["bp",BIG3[1].re],["dl",BIG3[2].re],["oh",/press militar|overhead|ohp/i]];
+// el nombre decide el levantamiento y las regex no cambian: se memoriza por nombre (el replay lo pide por cada ejercicio de cada sesión)
+const _lkMemo=new Map();
+function liftKey(name){ name=String(name||"");
+  if(_lkMemo.has(name)) return _lkMemo.get(name);
+  const r=liftKeyOf(name); _lkMemo.set(name,r); return r; }
+function liftKeyOf(name){
+  for(const [k,re] of LIFT_DB) if(re.test(name)) return k;
+  if(LIFT_NOBAR.test(name)) return null;
+  for(const [k,re] of LIFT_BAR) if(re.test(name)) return k;
+  return null; }
+// fechas "YYYY-MM-DD" a mediodía local: las restas no se tuercen con el cambio de hora
+const lgDate=k=>new Date(k+"T12:00:00");
+const _ltMemo=new Map(), _lmMemo=new Map();   // por clave de día: milisegundos y lunes de su semana (puras, el replay las repite por sesión)
+const lgT=k=>{ let t=_ltMemo.get(k); if(t===undefined){ t=+lgDate(k); _ltMemo.set(k,t); } return t; };
+const lgDiff=(a,b)=>Math.round((lgT(b)-lgT(a))/864e5);
+const lgAdd=(k,n)=>{ const d=lgDate(k); d.setDate(d.getDate()+n); return dateKey(d); };
+const lgMonday=k=>{ let m=_lmMemo.get(k); if(m===undefined){ const d=lgDate(k); d.setDate(d.getDate()-((d.getDay()+6)%7)); m=dateKey(d); _lmMemo.set(k,m); } return m; };
+/* pasos del replay. cada familia aporta un paso {init(st), sess?(st,s,k), bw?(st,kg,k)}:
+   init crea sus acumuladores en st, sess pliega la sesión contada del día k y bw el peso corporal del día.
+   el recorrido llama a todos los pasos en orden; una familia nueva solo añade su paso aquí. */
+const LG_FOLD=[
+  // constancia: conteo, racha de días, hueco desde la sesión anterior, semanas seguidas con ≥3
+  {init(st){ Object.assign(st,{sessions:0, firstDay:"", lastDay:"", gapDays:0, streak:0, weekKey:"", weekN:0, weeksRun:0}); },
+   sess(st,s,k){ st.sessions++; if(!st.firstDay) st.firstDay=k;
+     st.gapDays=st.lastDay?lgDiff(st.lastDay,k):0;
+     st.streak=st.gapDays===1?st.streak+1:1; st.lastDay=k;
+     // weeksRun: semanas seguidas con ≥3 hasta la actual; la actual suma al llegar a su 3.er entreno
+     const w=lgMonday(k);
+     if(w!==st.weekKey){ if(!(st.weekN>=3&&lgAdd(st.weekKey,7)===w)) st.weeksRun=0; st.weekKey=w; st.weekN=0; }
+     if(++st.weekN===3) st.weeksRun++; }},
+  // fuerza: mejor peso real por levantamiento (liftW, kg) y mejor 1rm estimado de los tres grandes (liftE1, kg)
+  // liftR: mejor peso ÷ peso corporal del día de la serie (R17: la razón al momento de levantar, no contra el peso de hoy)
+  {init(st){ st.liftW={sq:0,bp:0,dl:0,oh:0,dbp:0,gob:0,row:0}; st.liftE1={sq:0,bp:0,dl:0}; st.liftR={sq:0,bp:0,dl:0,oh:0,dbp:0,gob:0,row:0}; },
+   sess(st,s){ (s.exercises||[]).forEach(e=>{ const lk=liftKey(e.name); if(!lk) return;
+     (e.sets||[]).forEach(x=>{ if(!isWork(x)) return; const w=num(x.kg), r=parseInt(x.reps)||0; if(!(w>0&&r>=1)) return;
+       if(w>st.liftW[lk]) st.liftW[lk]=w;
+       if(st.bw>0&&w/st.bw>st.liftR[lk]) st.liftR[lk]=w/st.bw;
+       if(lk in st.liftE1){ const e1=est1rm(x); if(e1>st.liftE1[lk]) st.liftE1[lk]=e1; } }); }); }},
+  // récords (§3.4): un récord es un (ejercicio, día) cuyo mejor e1rm de series de trabajo supera por >0.01 kg el mejor de días anteriores.
+  // sin día previo con series de trabajo no hay récord. prGap = días desde el récord anterior (0 si hoy no hay récord o es el primero)
+  {init(st){ Object.assign(st,{best:{}, prN:0, prDay:0, prGap:0, lastPr:"", prWeek:{wk:"",lifts:new Set()}}); },
+   sess(st,s,k){ st.prDay=0; st.prGap=0; const day={};
+     (s.exercises||[]).forEach(e=>{ if(!e||e.exId==null) return;
+       (e.sets||[]).forEach(x=>{ if(!isWork(x)) return; const d=day[e.exId]||(day[e.exId]={e1:0,lk:liftKey(e.name)}); d.e1=Math.max(d.e1,est1rm(x)); }); });
+     const wk=lgMonday(k); if(st.prWeek.wk!==wk) st.prWeek={wk,lifts:new Set()};
+     for(const id in day){ const d=day[id], prev=st.best[id];
+       if(prev!==undefined&&d.e1>prev+0.01){ st.prDay++; if(d.lk==="sq"||d.lk==="bp"||d.lk==="dl") st.prWeek.lifts.add(d.lk); }
+       st.best[id]=prev===undefined?d.e1:Math.max(prev,d.e1); }
+     if(st.prDay){ st.prN+=st.prDay; st.prGap=st.lastPr?lgDiff(st.lastPr,k):0; st.lastPr=k; } }},
+  // volumen: tonelaje (kg), series y repeticiones de trabajo; dayTons es el de la sesión del día
+  {init(st){ Object.assign(st,{tons:0, dayTons:0, sets:0, reps:0}); },
+   sess(st,s){ st.dayTons=0;
+     (s.exercises||[]).forEach(e=>(e&&e.sets||[]).forEach(x=>{ if(!isWork(x)) return; const r=parseInt(x.reps)||0;
+       st.dayTons+=num(x.kg)*r; st.sets++; st.reps+=r; }));
+     st.tons+=st.dayTons; }},
+  // hábitos y secretos: notas, calentamiento, superseries, "todas hechas", pesajes, ejercicios distintos, grupos de la semana,
+  // sábado→domingo, racha de semanas con pierna, y banderas del día para las horas (early, owl, mara, expr)
+  {init(st){ Object.assign(st,{notes:0, warms:0, supers:0, allDone:0, bwN:0, exSeen:new Set(), wkMuscles:{wk:"",set:new Set()},
+     satWk:"", legsRun:0, legsWk:"", early:false, owl:false, mara:false, expr:false}); },
+   bw(st){ st.bwN++; },
+   sess(st,s,k){ const exs=(s.exercises||[]).filter(e=>e&&typeof e==="object"), sets=[];
+     exs.forEach(e=>(Array.isArray(e.sets)?e.sets:[]).forEach(x=>{ if(x&&typeof x==="object") sets.push([e,x]); }));
+     if(typeof s.note==="string"&&s.note.trim()) st.notes++;
+     if(sets.some(([,x])=>x.done&&x.type==="warm")) st.warms++;
+     if(exs.some(e=>e.ss===true&&(Array.isArray(e.sets)?e.sets:[]).some(x=>x&&x.done))) st.supers++;
+     const all=sets.length>0&&sets.every(([,x])=>x.done); if(all) st.allDone++;
+     const wk=lgMonday(k); if(st.wkMuscles.wk!==wk) st.wkMuscles={wk,set:new Set()};
+     let legs=false;
+     sets.forEach(([e,x])=>{ if(!isWork(x)) return;
+       st.exSeen.add(e.exId!=null?e.exId:e.name);
+       const m=e.muscle==="Glúteo"?"Piernas":e.muscle; if(m) st.wkMuscles.set.add(m); if(m==="Piernas") legs=true; });
+     if(legs&&st.legsWk!==wk){ st.legsRun=st.legsWk&&lgAdd(st.legsWk,7)===wk?st.legsRun+1:1; st.legsWk=wk; }
+     if(lgDate(k).getDay()===6) st.satWk=wk;
+     const h=t=>t?new Date(t).getHours():-1, dur=sessionDur(k), sh=h(s.startedAt), eh=h(s.endedAt);
+     st.early=sh===4||sh===5; st.owl=eh===23||(eh>=0&&eh<=2);
+     st.mara=dur!=null&&dur>=7200; st.expr=dur!=null&&dur<1200&&all&&sets.filter(([,x])=>isWork(x)).length>=6; }},
+];
+// progreso "de hoy": una racha o una cadena de semanas que ya se cortó vale 0 en la ficha
+function lgStreakNow(st){ return st.lastDay&&lgDiff(st.lastDay,todayKey())<=1?st.streak:0; }
+function lgWeeksNow(st){ const w=lgMonday(todayKey()); return st.weekKey===w||(st.weekN>=3&&lgAdd(st.weekKey,7)===w)?st.weeksRun:0; }
+// umbral de peso fijo en la unidad que se muestra; se compara contra conv(kg guardado)
+const liftThr=(kg,lb)=>U()==="lb"?lb:kg;
+const lgBig3Max=st=>Math.max(st.liftW.sq,st.liftW.bp,st.liftW.dl);
+const lgW=(track,id,grade,title,req,lift,kg,lb)=>lgB(id,"fuerza",grade,title,req,{track,live:true,
+  test:st=>st.liftW[lift]>0&&conv(st.liftW[lift])>=liftThr(kg,lb), prog:st=>({cur:conv(st.liftW[lift]),goal:liftThr(kg,lb)})});
+const lgFW=(id,grade,title,req,lift,kg,lb)=>lgW("barra",id,grade,title,req,lift,kg,lb);
+const lgPlate=(id,grade,title,req,kg,lb)=>lgB(id,"fuerza",grade,title,req,{track:"barra",live:true,
+  test:st=>lgBig3Max(st)>0&&conv(lgBig3Max(st))>=liftThr(kg,lb), prog:st=>({cur:conv(lgBig3Max(st)),goal:liftThr(kg,lb)})});
+const lgPC=(id,n,grade,title,req,lift)=>lgB(id,"fuerza",grade,title,req,{track:"barra",live:true,
+  test:st=>st.liftR[lift]>=n-1e-9,
+  prog:st=>st.bw>0||st.liftR[lift]>0?{cur:Math.round(st.liftR[lift]*100)/100,goal:n}:{txt:"registra tu peso"}});
+const lgLv=(id,i,grade,title,req)=>{ const ratio=st=>st.bw>0?(st.liftE1.sq+st.liftE1.bp+st.liftE1.dl)/st.bw:0;
+  return lgB(id,"fuerza",grade,title,req,{track:"barra",live:true,
+    test:st=>st.bw>0&&slevel(ratio(st),[2.75,3.75,5.25,7.25])>=i,
+    prog:st=>st.bw>0?{cur:Math.round(ratio(st)*100)/100,goal:[2.75,3.75,5.25,7.25][i-1]}:{txt:"registra tu peso"}}); };
+const lgDB=(id,grade,title,req,lift,kg,lb)=>lgW("mancuernas",id,grade,title,req,lift,kg,lb);
+const lgB=(id,fam,grade,title,req,o)=>Object.assign({id,fam,grade,title,req,scope:"core"},o);
+// récords y volumen comparten forma: un acumulador de st contra un umbral (div pasa kg a toneladas)
+const lgAcc=(fam,id,grade,title,req,key,goal,div=1,live=true)=>lgB(id,fam,grade,title,req,{live,
+  test:st=>st[key]/div>=goal-1e-9, prog:st=>({cur:st[key]/div,goal})});
+const lgPr=(id,n,grade,title,req)=>lgAcc("records",id,grade,title,req,"prN",n);
+const lgTon=(id,t,grade,title,req)=>lgAcc("volumen",id,grade,title,req,"tons",t,1000);
+const lgDayTon=(id,t,grade,title,req)=>lgAcc("volumen",id,grade,title,req,"dayTons",t,1000);
+const lgSets=(id,n,grade,title,req)=>lgAcc("volumen",id,grade,title,req,"sets",n);
+const lgCount=(id,n,grade,title,req)=>lgB(id,"constancia",grade,title,req,{test:st=>st.sessions>=n, prog:st=>({cur:st.sessions,goal:n})});
+const lgStreak=(id,n,grade,title,req)=>lgB(id,"constancia",grade,title,req,{test:st=>st.streak>=n, prog:st=>({cur:lgStreakNow(st),goal:n})});
+const lgWeeks=(id,n,grade,title,req)=>lgB(id,"constancia",grade,title,req,{test:st=>st.weeksRun>=n, prog:st=>({cur:lgWeeksNow(st),goal:n})});
+// hábitos: contador de st contra umbral; no son live, solo se ganan al terminar el entreno
+const lgHab=(id,grade,title,req,key,goal)=>lgAcc("habitos",id,grade,title,req,key,goal,1,false);
+const lgSec=(id,grade,title,req,test)=>lgB(id,"secretos",grade,title,req,{secret:true, test, prog:()=>({cur:0,goal:1})});
+const LG_MUSCLES=["Pecho","Espalda","Piernas","Hombros","Bíceps","Tríceps","Core"];  // mg7 (Glúteo cuenta como Piernas)
+const LOGROS=[
+  lgCount("c1",1,"B","primer paso","primer entreno terminado"),
+  lgCount("c10",10,"B","calentando motores","10 entrenos"),
+  lgCount("c25",25,"B","ya es costumbre","25 entrenos"),
+  lgCount("c50",50,"P","medio centenar","50 entrenos"),
+  lgCount("c100",100,"P","centurión","100 entrenos"),
+  lgCount("c250",250,"O","veterano","250 entrenos"),
+  lgCount("c500",500,"O","leyenda del hierro","500 entrenos"),
+  lgStreak("r3",3,"B","tres al hilo","racha de 3 días"),
+  lgStreak("r7",7,"P","siete de siete","racha de 7 días"),
+  lgStreak("r14",14,"P","dos semanas sin fallar","racha de 14 días"),
+  lgStreak("r30",30,"O","mes de hierro","racha de 30 días"),
+  lgWeeks("w4",4,"B","un mes en serio","4 semanas seguidas con ≥3 entrenos"),
+  lgWeeks("w12",12,"P","trimestre sólido","12 semanas seguidas con ≥3 entrenos"),
+  lgWeeks("w26",26,"O","medio año","26 semanas seguidas con ≥3 entrenos"),
+  lgWeeks("w52",52,"O","un año sin aflojar","52 semanas seguidas con ≥3 entrenos"),
+  lgB("back","constancia","B","de vuelta","entrenar tras 14+ días sin entrenar",{test:st=>st.gapDays>=14, prog:()=>({cur:0,goal:1})}),
+  lgB("year","constancia","O","aniversario","entrenar 365+ días después de tu primer entreno",
+    {test:st=>!!st.firstDay&&lgDiff(st.firstDay,st.lastDay)>=365, prog:st=>({cur:st.firstDay?Math.min(365,lgDiff(st.firstDay,st.lastDay)):0,goal:365})}),
+  // fuerza · barra
+  lgPlate("pc1","B","1 plate club","60 kg / 135 lb en sentadilla, banca o peso muerto",60,135),
+  lgPlate("pc2","P","2 plate club","100 kg / 225 lb",100,225),
+  lgPlate("pc3","O","3 plate club","140 kg / 315 lb",140,315),
+  lgPlate("pc4","O","4 plate club","180 kg / 405 lb",180,405),
+  lgPC("bp1",1,"P","tu propio peso","banca 1× pc","bp"),
+  lgPC("bp15",1.5,"O","banca de acero","banca 1.5× pc","bp"),
+  lgPC("sq15",1.5,"P","piernas de roble","sentadilla 1.5× pc","sq"),
+  lgPC("sq2",2,"O","doble o nada","sentadilla 2× pc","sq"),
+  lgPC("dl2",2,"P","levantador","peso muerto 2× pc","dl"),
+  lgPC("dl25",2.5,"O","arrancaárboles","peso muerto 2.5× pc","dl"),
+  lgFW("oh60","P","1 plate arriba","press militar 60 kg / 135 lb","oh",60,135),
+  lgPC("oh1",1,"O","sobre tu cabeza","press militar 1× pc","oh"),
+  lgLv("lv2",2,"B","intermedio","nivel de fuerza intermedio"),
+  lgLv("lv3",3,"P","avanzado","nivel de fuerza avanzado"),
+  lgLv("lv4",4,"O","élite","nivel de fuerza élite"),
+  lgB("k1000","fuerza","O","club de los 1000","mejores pesos de sentadilla + banca + peso muerto ≥ 1000 lb (453.6 kg)",{track:"barra",live:true,
+    test:st=>{ const t=st.liftW.sq+st.liftW.bp+st.liftW.dl; return t>0&&conv(t)>=liftThr(453.6,1000); },
+    prog:st=>({cur:conv(st.liftW.sq+st.liftW.bp+st.liftW.dl),goal:liftThr(453.6,1000)})}),
+  // fuerza · mancuernas
+  lgDB("db20","B","mancuerna de 20","press pecho o inclinado con mancuerna 20 kg / 45 lb","dbp",20,45),
+  lgDB("db30","P","mancuerna de 30","press pecho o inclinado con mancuerna 30 kg / 65 lb","dbp",30,65),
+  lgDB("gb32","P","goblet de 32","sentadilla goblet 32 kg / 70 lb","gob",32,70),
+  lgDB("rw40","O","remo de 40","remo con mancuerna 40 kg / 90 lb","row",40,90),
+  // récords
+  lgPr("pr1",1,"B","superado","primer récord"),
+  lgPr("pr10",10,"B","coleccionista","10 récords"),
+  lgPr("pr50",50,"P","rompe récords","50 récords"),
+  lgPr("pr100",100,"O","cien veces mejor","100 récords"),
+  lgPr("pr250",250,"O","imparable","250 récords"),
+  lgB("prb3","records","P","triple corona","récord en sentadilla, banca y peso muerto la misma semana",{live:true,
+    test:st=>st.prWeek.lifts.size>=3, prog:st=>({cur:st.prWeek.wk===lgMonday(todayKey())?st.prWeek.lifts.size:0,goal:3})}),
+  lgB("pr3s","records","P","día perfecto","3 récords en una sesión",{live:true, test:st=>st.prDay>=3, prog:()=>({cur:0,goal:3})}),
+  lgB("prlt","records","B","nunca es tarde","un récord tras 30+ días sin ninguno",{live:true, test:st=>st.prDay>0&&st.prGap>=30, prog:()=>({cur:0,goal:1})}),
+  // volumen
+  lgTon("t6",6,"B","un elefante","6 t levantadas en total"),
+  lgTon("t100",100,"P","cien toneladas","100 t en total"),
+  lgTon("t150",150,"P","una ballena azul","150 t en total"),
+  lgTon("t1000",1000,"O","mil toneladas","1,000 t en total"),
+  lgDayTon("s10",10,"P","sesión pesada","10 t en una sesión"),
+  lgDayTon("s20",20,"O","sesión monstruo","20 t en una sesión"),
+  lgSets("n100",100,"B","cien series","100 series"),
+  lgSets("n1k",1000,"P","mil series","1,000 series"),
+  lgSets("n5k",5000,"O","cinco mil series","5,000 series"),
+  lgAcc("volumen","rp10k","P","diez mil reps","10,000 repeticiones","reps",10000),
+  // hábitos
+  lgHab("no10","B","diario de entreno","10 entrenos con nota","notes",10),
+  lgHab("no50","P","cronista","50 entrenos con nota","notes",50),
+  lgHab("wu10","B","bien calentado","calentamiento en 10 entrenos","warms",10),
+  lgHab("wu50","P","a prueba de lesiones","calentamiento en 50 entrenos","warms",50),
+  lgHab("ss5","B","en cadena","superserie en 5 entrenos","supers",5),
+  lgHab("ss50","P","eslabón de hierro","superserie en 50 entrenos","supers",50),
+  lgB("wkd","habitos","B","fin de semana activo","sábado y domingo del mismo fin de semana",
+    {test:st=>!!st.lastDay&&lgDate(st.lastDay).getDay()===0&&st.satWk===lgMonday(st.lastDay), prog:()=>({cur:0,goal:1})}),
+  lgHab("al10","B","sin dejar nada","todas las series del día, 10 entrenos","allDone",10),
+  lgHab("al50","P","cumplidor","todas las series del día, 50 entrenos","allDone",50),
+  lgHab("bw10","B","a la báscula","registrar tu peso 10 veces","bwN",10),
+  lgHab("bw50","P","control total","registrar tu peso 50 veces","bwN",50),
+  lgB("ex25","habitos","P","variedad","25 ejercicios distintos",{test:st=>st.exSeen.size>=25, prog:st=>({cur:st.exSeen.size,goal:25})}),
+  lgB("mg7","habitos","P","cuerpo completo","todos los grupos musculares en una semana",
+    {test:st=>LG_MUSCLES.every(m=>st.wkMuscles.set.has(m)),
+     prog:st=>({cur:st.wkMuscles.wk===lgMonday(todayKey())?LG_MUSCLES.filter(m=>st.wkMuscles.set.has(m)).length:0,goal:LG_MUSCLES.length})}),
+  // secretos
+  lgSec("early","B","madrugador","empezar un entreno entre las 4:00 y las 5:59",st=>st.early),
+  lgSec("owl","B","búho","terminar un entreno entre las 23:00 y las 2:59",st=>st.owl),
+  lgSec("ny","B","año nuevo","entrenar un 1 de enero",st=>!!st.lastDay&&st.lastDay.slice(5)==="01-01"),
+  lgSec("xmas","B","navidad","entrenar un 25 de diciembre",st=>!!st.lastDay&&st.lastDay.slice(5)==="12-25"),
+  lgSec("f13","B","viernes 13","entrenar un viernes 13",st=>{ if(!st.lastDay) return false; const d=lgDate(st.lastDay); return d.getDay()===5&&d.getDate()===13; }),
+  lgSec("mara","P","maratón","una sesión de 2 h o más",st=>st.mara),
+  lgSec("expr","B","exprés","una sesión completa en menos de 20 min (≥6 series)",st=>st.expr),
+  lgB("legs","secretos","P","nunca te saltas pierna","pierna o glúteo cada semana, 8 semanas seguidas",
+    {secret:true, test:st=>st.legsRun>=8, prog:st=>({cur:st.legsWk&&(st.legsWk===lgMonday(todayKey())||lgAdd(st.legsWk,7)===lgMonday(todayKey()))?st.legsRun:0,goal:8})}),
+  // platino (meta, §10.3): corre después de las demás cada día, así cae el mismo día que su último requisito
+  // en el replay solo cuenta lo ganado hasta st.day (lo guardado puede tener fechas posteriores), así su fecha es la del último requisito
+  lgB("plat","platino","X","trck3r 100%","todos los logros de constancia, récords, volumen y hábitos, y una vía de fuerza completa",
+    {meta:true, test:(st,earned)=>{ const r=platReq(earned,st.day); return r.cur>=r.goal; }, prog:(st,earned)=>platReq(earned)}),
+  // temporadas (§10.1–10.2): fuera de las 77; ventana de fechas y retro:false (solo desde que la app la vio)
+  lgB("dic26","temporadas","P","diciembre de hierro","12 entrenos en diciembre de 2026",{scope:"season", from:"2026-12-01", to:"2026-12-31", retro:false,
+    test:st=>st.win.dic26.sessions>=12, prog:st=>({cur:st.win.dic26.sessions,goal:12})}),
+];
+const LGI=Object.fromEntries(LOGROS.map(b=>[b.id,b]));
+// id del catálogo: propiedad propia de LGI (LGI.constructor y demás heredadas no cuentan)
+const lgHas=id=>hasOwn(LGI,id);
+// requisito de platino (§2): las 48 de constancia, récords, volumen y hábitos + la pista de fuerza más avanzada.
+// earned = {id → d}; con day solo cuentan las fechas ≤ day (el replay), sin day cuenta todo (la ficha).
+// empate en proporción: la pista con menos pendientes (mancuernas al empezar). secretos no cuentan.
+const LG_CORE=LOGROS.filter(b=>b.scope==="core");
+const LG_PLAT_BASE=LG_CORE.filter(b=>["constancia","records","volumen","habitos"].includes(b.fam)).map(b=>b.id);
+const LG_PLAT_TRACKS=["barra","mancuernas"].map(t=>LG_CORE.filter(b=>b.fam==="fuerza"&&b.track===t).map(b=>b.id));
+function platReq(earned,day){ earned=earned||{};
+  const got=l=>l.filter(id=>earned[id]&&(!day||earned[id]<=day)).length, ratio=l=>got(l)/l.length;
+  const [a,b]=LG_PLAT_TRACKS, best=ratio(a)>ratio(b)||(ratio(a)===ratio(b)&&a.length-got(a)<b.length-got(b))?a:b;
+  return {cur:got(LG_PLAT_BASE)+got(best), goal:LG_PLAT_BASE.length+best.length}; }
+// cabecera del segmento (Ruling R2): lee lo GUARDADO en DB.logros, solo ids del catálogo; no reproduce el historial.
+// n/total/pct/fam cuentan scope "core"; pts suma también las de temporada; last = la guardada más reciente {id,d}
+function logrosSummary(){ const L=DB.logros&&typeof DB.logros==="object"?DB.logros:{};
+  const core=LG_CORE, fam={};
+  core.forEach(b=>{ (fam[b.fam]||(fam[b.fam]={n:0,total:0})).total++; });
+  let pts=0, n=0, season=0, last=null;
+  for(const id in L){ const b=lgHas(id)&&LGI[id], e=L[id]; if(!b||!e||typeof e!=="object") continue;
+    if(b.scope==="core"){ n++; fam[b.fam].n++; } else if(b.scope==="season") season++; else continue;
+    pts+=GRADE[b.grade].pts;
+    if(typeof e.d==="string"&&(!last||e.d>last.d)) last={id,d:e.d}; }
+  return {pts, n, total:core.length, pct:Math.round(n/core.length*100), last, fam, season:{n:season}}; }
+let _lgLast=null;
+/* §4.3: una pasada cronológica por la unión de fechas con sesión contada y con peso corporal.
+   cada día: st.bw, pasos de LG_FOLD, contadores de ventana, y luego dos fases sobre lo no ganado (normales, después meta).
+   ventanas (§10.2): una insignia con from/to tiene st.win[id]={sessions} (sesiones contadas dentro de su ventana) y solo
+   se prueba en fechas dentro de ella. con retro:false la ventana empieza además en DB.settings.logrosSeenAt[id]
+   (sin esa fecha no cuenta ni se gana).
+   earned empieza con lo GUARDADO en DB.logros (ids del catálogo, con su d): lo ganado es permanente (§4.4), así que el
+   recorrido nunca vuelve a probarlo ni a fecharlo, aunque su sesión ya no exista.
+   seed: SOLO PARA TESTS. {id → d} que se mezcla encima de lo guardado antes del recorrido (p. ej. para probar platino
+   sin 52 historiales). la app nunca lo pasa. un replay con seed o con includeOpen no actualiza _lgLast
+   (las barras de progreso reflejan solo el historial terminado).
+   puro: lee DB y nunca escribe en él ni en localStorage. */
+function replayLogros({includeOpen=false, seed=null}={}){
+  const cut=DB.settings.demoUntil||"";
+  const ok=k=>typeof k==="string"&&/^\d{4}-\d\d-\d\d$/.test(k)&&!(cut&&k<=cut);
+  const S={}, W={};
+  Object.keys(DB.sessions||{}).forEach(k=>{ const s=DB.sessions[k]; if(s&&s.finished&&ok(k)) S[k]=s; });
+  if(includeOpen){ const k=curKey(), s=curSession(); if(s&&ok(k)) S[k]=s; }
+  (DB.bodyweight||[]).forEach(b=>{ const w=b&&num(b.weight); if(w>0&&ok(b.date)) W[b.date]=w; });
+  const st={day:"", bw:0, win:{}}; LG_FOLD.forEach(f=>f.init(st));
+  // ventana efectiva [lo,hi] por insignia con from/to; lo=null si es retro:false y la app aún no la vio
+  const seenAt=DB.settings.logrosSeenAt||{}, win={};
+  LOGROS.forEach(b=>{ if(!b.from&&!b.to) return; let lo=b.from||"";
+    if(b.retro===false){ const v=seenAt[b.id]; lo=typeof v==="string"&&v?(v>lo?v:lo):null; }
+    win[b.id]={lo, hi:b.to||"9999-12-31"}; st.win[b.id]={sessions:0}; });
+  const inWin=(id,k)=>{ const w=win[id]; return !w||(w.lo!==null&&k>=w.lo&&k<=w.hi); };
+  const wins=Object.keys(win);
+  const L=DB.logros&&typeof DB.logros==="object"?DB.logros:{}, earned={};
+  for(const id in L){ const e=L[id]; if(lgHas(id)&&e&&typeof e.d==="string") earned[id]=e.d; }
+  Object.assign(earned,seed);
+  const p1=LOGROS.filter(b=>!b.meta), p2=LOGROS.filter(b=>b.meta);
+  const phase=(list,k)=>{ for(const b of list) if(!earned[b.id]&&inWin(b.id,k)&&b.test(st,earned)) earned[b.id]=k; };
+  [...new Set([...Object.keys(S),...Object.keys(W)])].sort().forEach(k=>{
+    st.day=k;
+    if(k in W){ st.bw=W[k]; for(const f of LG_FOLD) if(f.bw) f.bw(st,W[k],k); }
+    if(k in S){ for(const f of LG_FOLD) if(f.sess) f.sess(st,S[k],k);
+      for(const id of wins) if(inWin(id,k)) st.win[id].sessions++; }
+    phase(p1,k); phase(p2,k);
+  });
+  const r={st,earned}; if(!seed&&!includeOpen) _lgLast=r;
+  return r;
+}
+// barra de la ficha bloqueada, desde el último replay. null si ya está ganada (o no existe)
+function logroProg(id){ if(!lgHas(id)) return null; const b=LGI[id];
+  const r=_lgLast||replayLogros();
+  if(r.earned[id]||(DB.logros&&DB.logros[id])) return null;
+  return b.prog(r.st,r.earned); }
+/* §4.4: guarda lo nuevo en DB.logros y devuelve sus ids en orden del catálogo. nunca borra ni re-fecha lo guardado
+   (el replay ya lo trae pre-cargado: lo nuevo es lo ganado que no está guardado).
+   init: primera vez tras la actualización, todo seen:true. quiet/finish: seen:false. todo modo salvo live deja logrosInit=true.
+   live: replay con la sesión abierta, y solo se guardan las insignias live. antes del replay escribe la fecha de
+   visto (§10.2) de los ids que aún no la tienen. save() solo si algo cambió. */
+function syncLogros(mode){
+  const s=DB.settings; let ch=false;
+  if(!isObj(DB.logros)){ DB.logros={}; ch=true; }
+  if(!isObj(s.logrosSeenAt)){ s.logrosSeenAt={}; ch=true; }
+  const L=DB.logros, seenAt=s.logrosSeenAt, today=todayKey(), live=mode==="live";
+  LOGROS.forEach(b=>{ const v=hasOwn(seenAt,b.id)&&seenAt[b.id]; if(typeof v!=="string"||!v){ seenAt[b.id]=today; ch=true; } });
+  const {earned}=replayLogros({includeOpen:live}), out=[];
+  LOGROS.forEach(b=>{ const d=earned[b.id], e=hasOwn(L,b.id)&&L[b.id];
+    if(!d||(isObj(e)&&typeof e.d==="string")) return;   // guardado (válido): no se toca
+    if(live&&!b.live) return;
+    L[b.id]={d, seen:mode==="init"}; out.push(b.id); ch=true; });
+  // tras cualquier replay completo lo guardado ya está al día (p. ej. al importar un backup viejo): no hace falta otro init
+  if(mode!=="live"&&s.logrosInit!==true){ s.logrosInit=true; ch=true; }
+  if(ch) save();
+  return out;
+}
+// arranque, importar y editar historial: nunca rompen la app; un fallo solo avisa
+function bootLogros(){ try{ syncLogros(DB.settings.logrosInit?"quiet":"init"); }catch(e){ console.warn("logros",e); } }
+function quietLogros(){ try{ syncLogros("quiet"); }catch(e){ console.warn("logros",e); } }
+
 function shortDate(k){ const d=new Date(k+"T12:00:00"); return d.getDate()+" "+MES[d.getMonth()]; }
 // eje bajo una gráfica: fecha inicial, rango de valores y fecha final
 function sparkAxis(first,last,vals){ const mn=Math.min(...vals),mx=Math.max(...vals); const f=v=>Math.round(v*10)/10;
@@ -731,6 +1104,7 @@ let _noteEx=0;   // ejercicio cuya nota está abierta en la hoja
 function runEx(ei){ const s=curSession(); if(!s) return null; return s.exercises[ei==null?DB.run.exIdx:ei]||null; }
 const A={
   go(t){ _keepScroll=true; set({tab:t}); },
+  logroFam(f){ _lgFam=f; render(); },
   dataTab(k){ if(DB.dataTab===k) return; DB.dataTab=k; save(); render(); },
   goData(k){ DB.dataTab=k; _keepScroll=true; set({tab:"datos"}); },
   toggleEdit(){ DB.editMode=!DB.editMode; save(); render(); },
@@ -754,7 +1128,10 @@ const A={
     const g=groupAt(sess.exercises,ei); const members=[]; for(let j=g.start;j<=g.end;j++) members.push(j);
     for(let j=i+1;j<ex.sets.length;j++){ const n=ex.sets[j]; if(n.done||(n.type||"work")!==(s.type||"work")) continue; if(s.ek&&!n.ek) n.kg=s.kg; if(s.er&&!n.er) n.reps=s.reps; }
     if(roundComplete(sess,members,i)){ const secs=Math.max(...members.map(m=>restFor(sess.exercises[m].exId))); DB.run.restEnd=Date.now()+secs*1000; DB.run.resting=true; }
-    save(); if(isPr){ vibrate([25,40,25,40,90]); render(); showPR(ex.name,s); } else { vibrate(12); render(); } },
+    save();
+    if(isPr){ vibrate([25,40,25,40,90]); render(); showPR(ex.name,s); } else { vibrate(12); render(); }
+    // §4.3: el replay no frena el pintado de la serie verde; corre justo después (el overlay de récord ya está abierto: el aviso espera a closePR)
+    setTimeout(()=>{ let nu=[]; try{ nu=syncLogros("live"); if(nu.length) logrosToSession(sess,nu); }catch(e){ console.warn("logros",e); } achToast(nu); },0); },
   // un check por error se deshace tocando la marca; los récords se recalculan solos de los datos
   uncheckSet(ei,i){ const ex=runEx(ei); if(!ex||!ex.sets[i]) return; ex.sets[i].done=false; vibrate(10); save(); render();
     toast("serie desmarcada","deshacer",()=>{ ex.sets[i].done=true; save(); render(); }); },
@@ -778,7 +1155,7 @@ const A={
     }
     const k=curKey();
     if(s){ s.finished=true; if(s.startedAt) s.endedAt=Date.now(); } DB.run.active=false; DB.run.resting=false; DB.run.restEnd=0; DB.run.key=""; set({tab:"datos",dataTab:"historial"});
-    if(s) openSummary(k); },
+    if(s){ try{ logrosToSession(s,syncLogros("finish")); }catch(e){ console.warn("logros",e); } openSummary(k); } },
   discard(){ delete DB.sessions[curKey()]; DB.run={active:false,exIdx:0,rest:0,resting:false,key:"",restEnd:0}; save(); closeSheet(); set({tab:"inicio"}); toast("entreno descartado"); },
   plateFromEx(ei){ const ex=runEx(ei); if(!ex) return; let mw=0; ex.sets.forEach(s=>{ const w=num(s.kg); if(w>mw)mw=w; }); openPlate(mw?conv(mw):""); },
   openPlate(){ openPlate(""); },
@@ -855,6 +1232,8 @@ const A={
   wipe(){ openSheet(`<h3>¿borrar todo?</h3><div class="foot-note" style="margin-bottom:14px">se elimina rutina, historial, peso y datos demo. no se puede deshacer.</div><div class="btnrow"><div class="mbtn" onclick="closeSheet()">cancelar</div><div class="mbtn red" onclick="doWipe()">sí, borrar</div></div>`); }
 };
 window.A=A;
+// ids desbloqueados durante la sesión (el resumen los lee de aquí, no de "seen")
+function logrosToSession(s,ids){ if(!s||!ids||!ids.length) return; if(!Array.isArray(s.logros)) s.logros=[]; ids.forEach(id=>{ if(!s.logros.includes(id)) s.logros.push(id); }); save(); }
 function curSession(){ return DB.sessions[curKey()]; }
 function curEx(){ const s=curSession(); return s?s.exercises[DB.run.exIdx]:null; }
 
@@ -900,7 +1279,7 @@ const NAVICON={
   ajustes:`<path d="M2.4 5.2h11.2M2.4 10.8h11.2M6 3.2v4M10.4 8.8v4"/>`
 };
 function nav(){ const T=["inicio","entreno","datos","ajustes"];
-  return `<div class="nav">${T.map(t=>`<div class="${DB.tab===t?"active":""}" onclick="A.go('${t}')"><svg viewBox="0 0 16 16" aria-hidden="true">${NAVICON[t]}</svg><span>${t}</span></div>`).join("")}</div>`; }
+  return `<div class="nav">${T.map(t=>`<div class="${DB.tab===t?"active":""}" onclick="A.go('${t}')"><svg viewBox="0 0 16 16" aria-hidden="true">${NAVICON[t]}</svg><span>${t}${t==="datos"&&lgDot()?'<i class="lgdot"></i>':""}</span></div>`).join("")}</div>`; }
 
 function quoteHTML(){ const q=QUOTES[(DB.quoteN||0)%QUOTES.length];
   return `<div class="quote" id="quote" onclick="A.nextQuote()">// ${esc(q[0])}${q[1]?` <span class="qa">— ${esc(q[1])}</span>`:""}</div>`; }
@@ -1150,13 +1529,15 @@ function screenPerfil(){
 // historial y progreso eran dos tabs que hacían lo mismo (mirar atrás):
 // ahora comparten tab y se alternan con un segmento
 function screenDatos(){
-  const sub=DB.dataTab==="progreso"?"progreso":"historial";
+  const sub=dataSub();
   const now=new Date();
-  const segs=["historial","progreso"].map(k=>`<div class="${k===sub?"on":""}" onclick="A.dataTab('${k}')">${k}</div>`).join("");
+  const segs=["historial","progreso","logros"].map(k=>`<div class="${k===sub?"on":""}" onclick="A.dataTab('${k}')">${k}${k==="logros"&&sub!=="logros"&&lgUnseen()?'<i class="lgdot"></i>':""}</div>`).join("");
+  const body=sub==="progreso"?bodyProgreso():sub==="logros"?bodyLogros():bodyHistorial();
+  if(sub==="logros") lgMarkSeen();
   return `<div class="content">
     <div class="page-head"><div class="page-title">datos</div></div>
     <div class="dseg">${segs}</div>
-    ${sub==="progreso"?bodyProgreso():bodyHistorial()}
+    ${body}
   </div>`;
 }
 function render(){
@@ -1191,12 +1572,35 @@ function countUp(){
 /* ==================== SHEETS ==================== */
 const SHEET_TOP=`<div class="sheet-top"><span class="sp"></span><span class="grip"></span><button class="sheet-x" onclick="closeSheet()" aria-label="cerrar">×</button></div>`;
 function openSheet(html){ document.getElementById("sheet").innerHTML=SHEET_TOP+html; document.getElementById("overlay").classList.add("show"); if(!_sheetOpen){ _sheetOpen=true; pushLayer(); } }
-function hideSheet(){ document.getElementById("overlay").classList.remove("show"); _sheetOpen=false; }
+// toda salida de la hoja (botón, ×, fondo, gesto atrás) pasa por aquí; si era el detalle de un entreno, se cierra ese flujo
+function hideSheet(){ document.getElementById("overlay").classList.remove("show"); _sheetOpen=false; if(_detailKey) dsLeave(); }
 function closeSheet(){ const owned=_sheetOpen; hideSheet(); if(owned) dropLayer(); }
 window.closeSheet=closeSheet;
 document.getElementById("overlay").addEventListener("click",e=>{ if(e.target.id==="overlay") closeSheet(); });
 function toast(msg,label,fn){ const t=document.getElementById("toast"); t.innerHTML=esc(msg)+(label?` <button id="ta">${esc(label)}</button>`:""); t.classList.add("show"); if(label) document.getElementById("ta").onclick=()=>{ t.classList.remove("show"); clearTimeout(t._t); fn(); }; clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove("show"),label?4000:2000); }
 window.toast=toast;
+/* §5.4: cola de insignias, una cada 3 s (window._achMs la acorta en pruebas). más de 3 de golpe = un solo aviso.
+   espera mientras el overlay de récord está abierto; closePR la reanuda. tocar lo cierra. */
+let _achQ=[], _achBusy=false, _achT=0, _achGap=0;
+function achToast(ids){
+  if(!Array.isArray(ids)||!ids.length) return;
+  if(ids.length>3) _achQ.push({n:ids.length}); else ids.forEach(id=>{ if(lgHas(id)) _achQ.push({id}); });
+  achNext(); }
+function achNext(){
+  if(_achBusy||_prOpen||_achGap||!_achQ.length) return;
+  const it=_achQ.shift(), el=document.getElementById("achToast"); if(!el) return;
+  if(it.n){ el.className="more"; el.innerHTML=`<div class="am"><div class="at">+${it.n} logros · ver en el resumen</div></div>`; }
+  else { const b=LGI[it.id], g=GRADE[b.grade], em=emblemOf(b.id,"earned");
+    el.className="";
+    el.innerHTML=`<img class="ae" src="${emblemImg(em.shape,em.pal,2)}" alt=""><div class="am"><div class="ak">logro desbloqueado</div><div class="at">${esc(b.title)}</div></div><div class="ap"><span>+${g.pts}</span><img src="${gemImg(b.grade)}" alt=""><span>${g.name}</span></div>`; }
+  void el.offsetWidth; el.classList.add("show");
+  _achBusy=true; window._achShown=(window._achShown||0)+1; vibrate([15,30,15]);
+  _achT=setTimeout(achDismiss,window._achMs||3000); }
+function achDismiss(){
+  clearTimeout(_achT); const el=document.getElementById("achToast"); if(el) el.classList.remove("show");
+  if(!_achBusy) return; _achBusy=false;
+  _achGap=setTimeout(()=>{ _achGap=0; achNext(); },300); }
+window.achToast=achToast; window.achDismiss=achDismiss;
 
 let _routineDay=new Date().getDay();
 let _restEx=null;
@@ -1207,10 +1611,14 @@ function openSummary(k){ const s=DB.sessions[k]; if(!s) return;
   let cmp=""; if(prev){ const pv=sessionVol(prev); if(pv>0){ const pct=Math.round((vol-pv)/pv*100); cmp=`<span style="color:var(--txt)">${pct>=0?"+":""}${pct}%</span> vs ${shortDate(prev)}`; } }
   const prs=s.exercises.map(e=>{ let m=0,best=null; e.sets.forEach(x=>{ if(isWork(x)){ const v=est1rm(x); if(v>m){m=v;best=x;} } }); return m>0&&m>bestE1RM(e.exId,k)?{name:e.name,x:best,e1:m}:null; }).filter(Boolean);
   const prHTML=prs.map(p=>`<div class="impsum"><span style="color:var(--success)">■ ${esc(p.name.toLowerCase())}</span><b>${dsp(p.x.kg)||0} ${U()} × ${p.x.reps} · 1rm ${Math.round(conv(p.e1))}</b></div>`).join("");
+  const lgIds=(Array.isArray(s.logros)?s.logros:[]).filter(lgHas);
+  const lgHTML=lgIds.map(id=>{ const b=LGI[id], g=GRADE[b.grade], em=emblemOf(id,"earned");
+    return `<div class="sumlg lgrow" onclick="closeSheet();A.goData('logros')"><img class="ae" src="${emblemImg(em.shape,em.pal,2)}" alt=""><span class="am">${esc(b.title)}</span><span class="ap">+${g.pts} pts · ${g.name}</span></div>`; }).join("");
   openSheet(`<h3>entreno terminado<span class="dot">.</span></h3><div class="mono-note" style="margin-bottom:12px">// ${esc(s.label)} · ${shortDate(k)}</div>
     <div class="sumgrid"><div><b>${du?fmtDur(du):"—"}</b><span>duración</span></div><div><b>${sets}</b><span>series</span></div><div><b>${Math.round(conv(vol)).toLocaleString("en-US")}</b><span>${U()} volumen</span></div></div>
     ${cmp?`<div class="impsum"><span>contra la última ${esc(s.label)}</span><b>${cmp}</b></div>`:""}
     ${prs.length?`<div class="section-lbl" style="padding:14px 0 4px">récords de hoy</div>${prHTML}`:""}
+    ${lgIds.length?`<div class="section-lbl" style="padding:14px 0 4px">logros nuevos</div>${lgHTML}`:""}
     <div class="btnrow" style="margin-top:16px"><div class="mbtn" onclick="closeSheet();openShareSession('${k}')">↗ compartir</div><div class="mbtn green" onclick="closeSheet()">listo</div></div>`); }
 function openExHistory(exId){ const e=exById(exId); if(!e) return;
   const ks=Object.keys(DB.sessions).filter(k=>DB.sessions[k].exercises.some(x=>x.exId===exId&&x.sets.some(isWork))).sort().reverse();
@@ -1537,15 +1945,17 @@ window.dsExNote=(ei,v)=>{ const s=dsSess(); if(!s) return; s.exercises[ei].note=
 window.dsNote=v=>{ const s=dsSess(); if(!s) return; s.note=String(v).trim(); save(); };
 window.dsLabel=v=>{ const s=dsSess(); if(!s) return; s.label=String(v).trim()||"entreno"; save(); };
 window.dsShare=()=>{ openShareSession(_detailKey); };
-window.dsClose=()=>{ const k=_detailKey, s=dsSess(); if(s&&!s.exercises.length) delete DB.sessions[k]; _detailKey=null; save(); closeSheet(); render(); };
+// al cerrar el detalle (lo llama hideSheet): un registro sin ejercicios no se queda, y los logros se sincronizan
+function dsLeave(){ const k=_detailKey, s=dsSess(); _detailKey=null; if(s&&!s.exercises.length) delete DB.sessions[k]; save(); quietLogros(); render(); }
+window.dsClose=()=>{ closeSheet(); };
 window.dsAskDelete=()=>{
   const k=_detailKey, s=dsSess(); if(!s) return; const dt=new Date(k+"T12:00:00");
   openSheet(`<h3>¿borrar este entreno?</h3><div class="mono-note" style="margin-bottom:12px">// ${DOW[dt.getDay()]} ${dt.getDate()} ${MES[dt.getMonth()]} · ${esc(s.label)}. afecta racha, volumen y récords.</div><div class="btnrow"><div class="mbtn" onclick="renderSessionDetail()">volver</div><div class="mbtn red" onclick="dsDelete()">sí, borrar</div></div>`);
 };
 window.dsDelete=()=>{
   const k=_detailKey, copy=JSON.parse(JSON.stringify(DB.sessions[k]));
-  delete DB.sessions[k]; _detailKey=null; save(); closeSheet(); render();
-  toast("entreno borrado","deshacer",()=>{ DB.sessions[k]=copy; save(); render(); });
+  delete DB.sessions[k]; _detailKey=null; save(); quietLogros(); closeSheet(); render();
+  toast("entreno borrado","deshacer",()=>{ DB.sessions[k]=copy; save(); quietLogros(); render(); });
 };
 window.openPastLog=()=>{
   openSheet(`<h3>registrar entreno pasado</h3><div class="mono-note" style="margin-bottom:12px">// para el día que entrenaste sin la app a mano. si ya hay un entreno en esa fecha, lo abre para editarlo.</div>
@@ -1568,7 +1978,7 @@ function lastExNote(exId){
 
 function openBodyweight(){ const ex=DB.bodyweight.find(b=>b.date===todayKey()); openSheet(`<h3>peso corporal</h3><div class="field"><label>peso hoy (${U()})</label><input id="bw" inputmode="decimal" value="${ex?conv(ex.weight):""}" placeholder="ej. 78.5"></div><div class="btnrow"><div class="mbtn" onclick="closeSheet()">cancelar</div><div class="mbtn green" onclick="saveBw()">guardar</div></div>`); setTimeout(()=>document.getElementById("bw").focus(),80); }
 window.openBodyweight=openBodyweight;
-window.saveBw=()=>{ const w=toKg(document.getElementById("bw").value); if(!w){toast("peso inválido");return;} const k=todayKey(); const e=DB.bodyweight.find(b=>b.date===k); if(e)e.weight=w; else DB.bodyweight.push({date:k,weight:w}); save(); closeSheet(); render(); toast("peso guardado"); };
+window.saveBw=()=>{ const w=toKg(document.getElementById("bw").value); if(!w){toast("peso inválido");return;} const k=todayKey(); const e=DB.bodyweight.find(b=>b.date===k); if(e)e.weight=w; else DB.bodyweight.push({date:k,weight:w}); save(); quietLogros(); closeSheet(); render(); toast("peso guardado"); };
 
 function openPlate(prefill){ const bar=U()==="kg"?DB.settings.barKg:DB.settings.barLb; openSheet(`<h3>calculadora de discos</h3><div class="field two"><div><label>objetivo (${U()})</label><input id="pt" inputmode="decimal" value="${prefill||""}" oninput="calcPlate()"></div><div><label>barra (${U()})</label><input id="pb" inputmode="decimal" value="${bar}" oninput="calcPlate()"></div></div><div id="pv" class="bbell"></div><div id="px" class="ptxt"></div>`); setTimeout(calcPlate,30); }
 window.openPlate=openPlate;
@@ -1597,12 +2007,145 @@ function applyImport(t){
     <div class="impsum"><span>se borra</span><b style="color:var(--danger)">${cs} sesiones actuales</b></div>
     <div class="btnrow" style="margin-top:14px"><div class="mbtn" onclick="closeSheet()">cancelar</div><div class="mbtn red" onclick="commitImport()">sí, reemplazar</div></div>`);
 }
-window.commitImport=()=>{ const d=window._imp; if(!d) return; localStorage.setItem(KEY,JSON.stringify(d)); DB=load(); window._imp=null; closeSheet(); render(); toast("datos importados"); };
+window.commitImport=()=>{ const d=window._imp; if(!d) return; localStorage.setItem(KEY,JSON.stringify(d)); DB=load(); quietLogros(); window._imp=null; closeSheet(); render(); toast("datos importados"); };
 window.doWipe=()=>{ localStorage.removeItem(KEY); DB=seedAll(baseDefault()); DB.tab="inicio"; save(); closeSheet(); render(); openWelcome(); };
 
+/* ==================== LOGROS · EMBLEMAS ==================== */
+const LG_C=7.5;
+const LG_PAL={
+  red:["#2a0800","#b3360f","#ff4d1f","#ff9f70","#fff3e6"],
+  steel:["#0b1220","#3d5a80","#6f93c0","#bcd3ef","#ffffff"],
+  green:["#05250e","#13913a","#33ff66","#b0ffc6","#ffffff"],
+  violet:["#170828","#6a2fb0","#9d5cff","#d6bcff","#ffffff"],
+  teal:["#03202a","#0f7f8f","#2fd0e0","#adf4fb","#ffffff"],
+  night:["#0d0a1f","#3b2f7a","#6b5cd6","#b9b0f5","#ffffff"],
+  plat:["#14161c","#7f8aa3","#c3cbe0","#eef2fb","#ffffff"],
+  ice:["#061a2a","#1f6fa8","#5fb8f0","#c8ecff","#ffffff"],
+  bronze:["#241104","#8a4a1c","#c47a3a","#ecb57e","#fff3e0"],
+  silver:["#131519","#767c88","#b4bac6","#e4e8ef","#ffffff"],
+  gold:["#261800","#a56c00","#f2b400","#ffe08a","#ffffff"],
+  lockD:["#3A3A40","#1f1f24","#24242a","#2a2a30",null],
+  lockL:["#C9C7BF","#e4e1d9","#dcd9d0","#d3d0c6",null]
+};
+const LG_SHAPE=(()=>{
+  const C=LG_C;
+  function inStar(x,y){const pts=[];for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5,r=i%2?3.4:7.9;pts.push([C+r*Math.cos(a),8.2+r*Math.sin(a)]);}let ins=false;for(let i=0,j=9;i<10;j=i++){const[xi,yi]=pts[i],[xj,yj]=pts[j];if(((yi>y)!=(yj>y))&&(x<(xj-xi)*(y-yi)/(yj-yi)+xi))ins=!ins;}return ins;}
+  const SNOW_ANG=[Math.PI/2,Math.PI/6,-Math.PI/6];
+  const SNOW_KNOBS=[0,1,2,3,4,5].map(i=>[C+5.6*Math.cos(Math.PI/2+i*Math.PI/3),C+5.6*Math.sin(Math.PI/2+i*Math.PI/3)]);
+  function snow(x,y){
+    const dx=x-C,dy=y-C,r=Math.hypot(dx,dy);
+    if(r>7.6) return false;
+    if(r<=3.2) return true;
+    if(SNOW_ANG.some(a=>Math.abs(dx*Math.sin(a)-dy*Math.cos(a))<=1.55)) return true;
+    return SNOW_KNOBS.some(([kx,ky])=>Math.hypot(x-kx,y-ky)<=1.9);
+  }
+  return {
+    flame:(x,y)=>Math.hypot(x-C,y-10.2)<=5.2||(y>=0.5&&y<=10&&Math.abs(x-C-(10-y)*0.25)<=(y-0.5)*0.58)||(y>=3.5&&y<=9&&Math.abs(x-(C-4.6))<=(y-3.5)*0.42),
+    plate:(x,y)=>{const r=Math.hypot(x-C,y-C);return r<=7.5&&r>=2.3;},
+    star:inStar,
+    gem:(x,y)=>y>=2&&y<=14.5&&(y<=5?Math.abs(x-C)<=4.5+(y-2)*1.0:Math.abs(x-C)<=7.5-(y-5)*0.8),
+    oct:(x,y)=>{const dx=Math.abs(x-C),dy=Math.abs(y-C);return dx<=7.4&&dy<=7.4&&dx+dy<=10.6;},
+    moon:(x,y)=>Math.hypot(x-C,y-C)<=7.1&&Math.hypot(x-11.2,y-4.6)>5.6,
+    trophy:(x,y)=>{const dx=Math.abs(x-C);return (y>=1&&y<=8.5&&dx<=5.6-Math.max(0,y-4.5)*1.0)||(dx>5&&y>=1.5&&y<=6.5&&Math.abs(Math.hypot(dx-5.4,y-4)-1.9)<0.75)||(y>8&&y<=11.5&&dx<=1.3)||(y>11.5&&y<=14.5&&dx<=4.6-(y<12.5?1:0));},
+    snow,
+    dia:(x,y)=>Math.abs(x-C)+Math.abs(y-C)<=7.6
+  };
+})();
+const _emCache={};
+function emblemImg(shape,pal,scale){
+  const key=shape+"|"+pal+"|"+scale;
+  if(_emCache[key]) return _emCache[key];
+  const f=LG_SHAPE[shape],P=LG_PAL[pal],C=LG_C,cv=document.createElement("canvas");
+  cv.width=cv.height=16*scale;
+  const g=cv.getContext("2d");
+  const inside=(x,y)=>x>=0&&y>=0&&x<16&&y<16&&f(x+0.5,y+0.5);
+  for(let y=0;y<16;y++)for(let x=0;x<16;x++){
+    if(!inside(x,y)) continue;
+    const edge=!inside(x-1,y)||!inside(x+1,y)||!inside(x,y-1)||!inside(x,y+1);
+    const dx=x+0.5-C,dy=y+0.5-C;
+    let col;
+    if(edge) col=P[0];
+    else if(P[4]&&Math.hypot(dx+2.8,dy+2.8)<1.3) col=P[4];
+    else col=[P[3],P[2],P[1]][(dx<0?0:1)+(dy<0?0:1)];
+    g.fillStyle=col; g.fillRect(x*scale,y*scale,scale,scale);
+  }
+  return (_emCache[key]=cv.toDataURL());
+}
+function emblemOf(id,state){
+  const lockPal=resolveTheme()==="light"?"lockL":"lockD";
+  const b=LGI[id], fam=b&&FAM[b.fam]||FAM.constancia;
+  if(state==="secret") return {shape:"moon",pal:lockPal};
+  if(state==="locked") return {shape:fam.shape,pal:lockPal};
+  return {shape:fam.shape,pal:fam.pal};
+}
+function gemImg(grade){ return emblemImg("dia",GRADE[grade].pal,1); }
+
+/* ==================== LOGROS UI (§5.1, §5.2, §5.6) ==================== */
+let _lgFam="todos";
+const LG_FAMS=["constancia","fuerza","records","volumen","habitos","secretos"];
+const lgFamName=f=>f==="records"?"récords":f==="habitos"?"hábitos":f;
+// insignias de evento: su prog es un 0/1 de relleno (o cur 0 fijo), así que una barra no dice nada; se muestra su req
+const LG_EVENT=["back","wkd","pr3s","prlt"];
+const lgEntry=id=>{ const e=DB.logros&&hasOwn(DB.logros,id)&&DB.logros[id]; return isObj(e)&&typeof e.d==="string"?e:null; };
+function lgUnseen(){ return LOGROS.filter(b=>{ const e=lgEntry(b.id); return e&&e.seen===false; }).length; }
+const lgDot=()=>lgUnseen()>0&&!(DB.tab==="datos"&&DB.dataTab==="logros");
+function lgMarkSeen(){ let ch=false; LOGROS.forEach(b=>{ const e=lgEntry(b.id); if(e&&e.seen!==true){ e.seen=true; ch=true; } }); if(ch) save(); }
+const lgNum=n=>{ n=+n||0; return (Math.round(n*10)/10).toLocaleString("en-US"); };
+function lgRel(d){ const n=lgDiff(d,todayKey()); return n<=0?"hoy":n===1?"ayer":n<30?"hace "+n+" días":shortDate(d); }
+// estado de la ficha: earned | locked | secret (bloqueada secreta); prog solo para bloqueadas con barra
+function lgState(b){ const e=lgEntry(b.id);
+  if(e) return {kind:"earned",d:e.d,seen:e.seen!==false};
+  if(b.secret) return {kind:"secret"};
+  const p=logroProg(b.id)||{cur:0,goal:1};
+  return {kind:"locked",p,bar:!LG_EVENT.includes(b.id)&&p.goal>0&&p.txt===undefined,pct:p.goal>0&&p.txt===undefined?Math.min(1,p.cur/p.goal):0}; }
+// ventana de temporada sin ganar: antes / dentro / después
+function lgSeason(b){ if(!b.from) return null; const t=todayKey();
+  if(t<b.from) return {txt:"empieza el "+(+b.from.slice(8))+" "+MES[+b.from.slice(5,7)-1],bar:false};
+  if(t>b.to) return {txt:"temporada terminada",bar:false};
+  const n=lgDiff(t,b.to); return {txt:n===0?"último día":n===1?"queda 1 día":"quedan "+n+" días",bar:true}; }
+function lgSort(list){
+  const info=list.map(b=>({b,st:lgState(b)}));
+  const tr=b=>b.track==="mancuernas"?1:0;
+  info.sort((x,y)=>tr(x.b)-tr(y.b)||(x.st.kind==="earned"?0:1)-(y.st.kind==="earned"?0:1)||
+    (x.st.kind==="earned"?(x.st.d<y.st.d?-1:x.st.d>y.st.d?1:0):(y.st.pct||0)-(x.st.pct||0)));
+  return info; }
+function lgTile(b,st){
+  const sec=st.kind==="secret", lk=st.kind!=="earned";
+  const em=emblemOf(b.id,sec?"secret":lk?"locked":"earned"), season=lk&&!sec?lgSeason(b):null;
+  const bar=lk&&!sec&&st.bar&&(!season||season.bar);
+  const state=!lk?`${shortDate(st.d)}${st.seen?"":'<i class="lgnew"></i>'}`:sec?"":season?esc(season.txt):st.p.txt!==undefined?esc(st.p.txt):st.bar?`${lgNum(st.p.cur)} / ${lgNum(st.p.goal)}`:"";
+  return `<div class="lgtile${lk?" lk":""}${sec?" sec":""}${season&&!season.bar&&b.to<todayKey()?" miss":""}" data-id="${b.id}" onclick="openLogro('${b.id}')">
+    <span class="lgpts">${GRADE[b.grade].pts}</span><img class="lggem" src="${gemImg(b.grade)}" alt="">
+    <img class="lgem" src="${emblemImg(em.shape,em.pal,3)}" alt="">
+    <div class="lgt">${sec?"???":esc(b.title)}</div><div class="lgr">${sec?"logro secreto":esc(b.req)}</div>
+    ${bar?`<div class="lgbar"><i style="width:${Math.round(st.pct*100)}%"></i></div>`:""}
+    ${state?`<div class="lgs">${state}</div>`:""}</div>`; }
+function bodyLogros(){
+  const sm=logrosSummary(), fams=["platino",...LG_FAMS,"temporadas"];
+  const chip=(f,lbl)=>`<div class="chip${_lgFam===f?" on":""}" onclick="A.logroFam('${f}')">${lbl}</div>`;
+  const chips=chip("todos","todos")+LG_FAMS.map(f=>chip(f,`${lgFamName(f)} ${sm.fam[f].n}/${sm.fam[f].total}`)).join("")+chip("temporadas",`temporadas ${sm.season.n}`);
+  const secs=fams.filter(f=>_lgFam==="todos"||_lgFam===f).map(f=>{
+    const list=LOGROS.filter(b=>b.fam===f); if(!list.length) return "";
+    const info=lgSort(list), got=f==="temporadas"?sm.season.n:sm.fam[f].n;
+    const cnt=f==="temporadas"?` · ${got}`:` · ${got}/${sm.fam[f].total}`;
+    return `<div class="lgsec"><h3>// ${lgFamName(f)}${f==="platino"?"":cnt}</h3><div class="lggrid">${info.map(i=>lgTile(i.b,i.st)).join("")}</div></div>`; }).join("");
+  const last=sm.last&&lgHas(sm.last.id)?`<div class="lglast">// último: ${esc(LGI[sm.last.id].title)} · ${lgRel(sm.last.d)}</div>`:"";
+  return `<div class="lghead"><div class="lgtop"><b>${sm.pts.toLocaleString("en-US")} pts</b> · ${sm.n}/${sm.total} · ${sm.pct}%</div>
+    <div class="lgbar"><i style="width:${sm.pct}%"></i></div>${last}</div>
+    <div class="lgchips">${chips}</div>${secs}`; }
+function openLogro(id){ if(!lgHas(id)) return; const b=LGI[id], st=lgState(b), sec=st.kind==="secret";
+  const em=emblemOf(id,sec?"secret":st.kind==="locked"?"locked":"earned"), season=st.kind==="locked"?lgSeason(b):null;
+  const tail=st.kind==="earned"?`conseguido el ${shortDate(st.d)}`:sec?"sigue entrenando":season?esc(season.txt):
+    st.p.txt!==undefined?esc(st.p.txt):st.bar?`${lgNum(st.p.cur)} / ${lgNum(st.p.goal)}`:"aún sin conseguir";
+  const bar=st.kind==="locked"&&st.bar&&(!season||season.bar);
+  openSheet(`<div class="lgsheet"><img class="lgem" src="${emblemImg(em.shape,em.pal,6)}" alt="">
+    <h2>${sec?"???":esc(b.title)}</h2><div class="lgr">${sec?"logro secreto":esc(b.req)}</div>
+    <div class="lgg">${GRADE[b.grade].name} · ${GRADE[b.grade].pts} pts</div>
+    ${bar?`<div class="lgbar"><i style="width:${Math.round(st.pct*100)}%"></i></div>`:""}<div class="lgs">${tail}</div></div>`); }
+
 /* ==================== PR + SHARE ==================== */
-function showPR(name,s){ const w=conv(num(s.kg)), e1=conv(est1rm(s)); window._pr={kind:"pr",name,weight:w,reps:parseInt(s.reps)||0,e1:Math.round(e1)}; document.getElementById("prLift").textContent=name; document.getElementById("prWeight").innerHTML=`${w}<small>${U()}</small>`; document.getElementById("prSub").textContent=`${parseInt(s.reps)||0} reps · 1rm est. ${Math.round(e1)}${U()}`; document.getElementById("prOverlay").classList.add("show"); if(!_prOpen){ _prOpen=true; pushLayer(); } burst(); }
-function hidePR(){ document.getElementById("prOverlay").classList.remove("show"); _prOpen=false; }
+function showPR(name,s){ const w=conv(num(s.kg)), e1=conv(est1rm(s)); window._pr={kind:"pr",name,weight:w,reps:parseInt(s.reps)||0,e1:Math.round(e1)}; document.getElementById("prLift").textContent=name; document.getElementById("prWeight").innerHTML=`${w}<small>${U()}</small>`; document.getElementById("prSub").textContent=`${parseInt(s.reps)||0} reps · 1rm est. ${Math.round(e1)}${U()}`; document.getElementById("prOverlay").classList.add("show"); if(!_prOpen){ _prOpen=true; pushLayer(); } achDismiss(); burst(); }   // un aviso en pantalla no se queda sobre el overlay; la cola sigue en hidePR
+function hidePR(){ document.getElementById("prOverlay").classList.remove("show"); _prOpen=false; achNext(); }
 function burst(){ const box=document.getElementById("prRays"); box.innerHTML=""; const cols=["var(--success)","var(--accent)","var(--txt)"]; for(let i=0;i<26;i++){ const s=document.createElement("span"); s.className="confetti"; s.style.background=cols[i%cols.length]; const a=Math.random()*6.283,d=100+Math.random()*220; s.style.setProperty("--dx",(Math.cos(a)*d).toFixed(0)+"px"); s.style.setProperty("--dy",(Math.sin(a)*d).toFixed(0)+"px"); s.style.animationDelay=(Math.random()*.12).toFixed(2)+"s"; box.appendChild(s); } }
 
 function big3ShareData(){ const bw=curBW(); const lifts=BIG3.map(b=>({label:b.label,d:bigLift(b.re),thr:b.thr})); const total=Math.round(lifts.reduce((s,x)=>s+x.d.e1,0)); const tlvl=bw?slevel(total/bw,[2.75,3.75,5.25,7.25]):null; return {kind:"big3",lifts:lifts.map(x=>({label:x.label,val:x.d.e1?conv(x.d.e1):0,lvl:bw&&x.d.e1?LVL[slevel(x.d.e1/bw,x.thr)]:""})),total:conv(total),level:tlvl!=null?LVL[tlvl]:"",shareText:`mi big 3: ${conv(total)}${U()} total. #trck3r`}; }
@@ -1678,6 +2221,7 @@ window.lpClick=(ei,i)=>{ if(_lpFired){ _lpFired=false; return; } A.cycleType(ei,
 
 DB.quoteN=((DB.quoteN==null?-1:DB.quoteN)+1)%QUOTES.length; save();
 applyTheme();
+bootLogros();
 render();
 history.replaceState({t:"tab",tab:DB.tab},"");  // raíz del stack, ya con el tab normalizado
 if(!DB.settings.onboarded) openWelcome();
