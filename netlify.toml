@@ -1,6 +1,7 @@
 [build]
   publish = "."
-  command = ""
+  # repo-only folders (tests, docs, generators) are removed before publish so the site never serves them
+  command = "rm -rf tests docs resources_src"
 
 [[headers]]
   for = "/*"
