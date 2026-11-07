@@ -1,0 +1,7 @@
+{
+  "name": "trck3r-tests",
+  "private": true,
+  "description": "Playwright tests for TRCK3R (run from this folder: npm install && npm test)",
+  "scripts": { "test": "node --test *.test.js" },
+  "devDependencies": { "playwright": "1.62.1" }
+}
