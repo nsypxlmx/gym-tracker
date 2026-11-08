@@ -1528,8 +1528,7 @@ describe("live", () => {
     const p = await live([[180, 1]], { past: 0 });
     await p.evaluate(() => A.checkSet(0, 0));
     await settle(p);
-    assert.ok(await p.isVisible("#prOverlay.show"));            // sin historial, también es récord: el aviso espera
-    await p.evaluate(() => A.closePR());
+    assert.equal(await p.isVisible("#prOverlay.show"), false);  // sin historial no hay récord (es la base): el aviso sale directo
     await p.waitForSelector("#achToast.show");
     assert.equal(await p.evaluate(() => window._achShown), 1);
     assert.equal((await p.textContent("#achToast")).trim().replace(/\s+/g, " "), "+4 logros · ver en el resumen");
